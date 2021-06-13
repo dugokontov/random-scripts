@@ -2,6 +2,7 @@ const express = require('express');
 const fileUpload = require('express-fileupload');
 
 const print = require('./print');
+const { log } = require('./helper/util');
 
 const app = express();
 const port = 3000;
@@ -19,5 +20,5 @@ app.get('/', (req, res) => {
 app.post('/print', print.uploadAndPrint);
 
 app.listen(port, () => {
-    console.log(`Listening at http://localhost:${port}`);
+    log(`Listening at http://localhost:${port}`);
 });
