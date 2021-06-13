@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Print</title>
+    </head>
+    <body>
+        <h1>Select file to print</h1>
+
+        <form
+            ref="printForm"
+            id="printForm"
+            action="/print"
+            method="post"
+            enctype="multipart/form-data"
+        >
+            <input type="file" name="fileToPrint" />
+            <input type="submit" value="Print" />
+        </form>
+    </body>
+</html>
