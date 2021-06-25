@@ -47,7 +47,7 @@ router.get('/', async (req, res) => {
  */
 router.post('/', async (req, res) => {
     const { name, storageId, position } = req.body;
-    const [top, left, right, bottom] = position;
+    const [left, top, width, height] = position;
     // TODO check all fields
     const db = await getDb();
     let sectionId;
@@ -61,7 +61,12 @@ router.post('/', async (req, res) => {
     } catch (error) {
         throw new Error(error);
     }
-    res.status(200).json({ sectionId });
+    res.status(200).json({
+        id: sectionId,
+        name,
+        storageId: +storageId,
+        position,
+    });
 });
 
 module.exports = router;

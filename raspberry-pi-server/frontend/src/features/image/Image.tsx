@@ -1,9 +1,19 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-import { BASE_URL } from '../../app/api';
+import { BASE_URL } from '../../app/storagesApi';
 
-type Props = { imageId: number };
+type Props = { imageId: number } & React.ImgHTMLAttributes<HTMLImageElement>;
 
-export function Image({ imageId, ...rest }: Props) {
-    return <img src={`${BASE_URL}/api/image/${imageId}`} {...rest} alt="" />;
+export function Image({ imageId, alt, ...rest }: Props) {
+    const style: CSSProperties = {
+        width: '100%',
+    };
+    return (
+        <img
+            src={`${BASE_URL}/api/image/${imageId}`}
+            style={style}
+            alt={alt}
+            {...rest}
+        />
+    );
 }

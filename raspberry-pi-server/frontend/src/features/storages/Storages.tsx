@@ -1,10 +1,10 @@
 import React from 'react';
-import { useGetAllStoragesQuery } from '../../app/api';
+import { useGetAllStoragesQuery } from '../../app/storagesApi';
 import { Loader } from '../loader/Loader';
 import { StorageCard } from './StorageCard';
 
 export function Storages() {
-    const { data, error, isLoading } = useGetAllStoragesQuery('');
+    const { data, error, isLoading } = useGetAllStoragesQuery();
 
     let content: React.ReactNode;
     if (error) {
