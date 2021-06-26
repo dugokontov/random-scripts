@@ -6,7 +6,6 @@ const getDb = require('../helper/db');
 const { log } = require('../helper/util');
 
 const router = express.Router();
-
 router.use(express.json());
 
 /**
@@ -36,7 +35,7 @@ router.get('/', async (req, res) => {
     }
 
     const db = await getDb();
-    /** @type {{id: number, section_id: number, name: string, description: string, image_ids: string}[]} */
+    /** @type {{id: number, section_id: number, name: string, description: string, image_ids: string | undefined}[]} */
     let results;
     try {
         results = await db.all(query);
@@ -48,7 +47,7 @@ router.get('/', async (req, res) => {
         sectionId: row.section_id,
         name: row.name,
         description: row.description,
-        imageIds: row.image_ids.split(',').map(Number),
+        imageIds: row.image_ids?.split(',').map(Number) ?? [],
     }));
     res.status(200).json(resultsToReturn);
 });
@@ -83,9 +82,12 @@ router.post('/', async (req, res) => {
         if (numberImageIds.length) {
             /** @type {SQLStatement} */
             const query = SQL`INSERT INTO item_image (item_id, image_id) VALUES`;
-            numberImageIds.forEach((imageId) =>
-                query.append(SQL`(${itemId}, ${imageId})`)
-            );
+            numberImageIds.forEach((imageId, index) => {
+                if (index !== 0) {
+                    query.append(SQL`,`);
+                }
+                query.append(SQL`(${itemId}, ${imageId})`);
+            });
             await db.run(query);
         }
     } catch (error) {

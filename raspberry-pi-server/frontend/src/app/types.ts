@@ -4,6 +4,11 @@ export type Storage = {
     imageId: number;
 };
 
+export type StoragePayload = {
+    name: string;
+    image: FileList;
+};
+
 export type Position = [number, number, number, number];
 export type UndefinedPosition =
     | [undefined, undefined, undefined, undefined]
@@ -31,7 +36,7 @@ export type ItemPayload = {
     name: string;
     description?: string;
     images: FileList | null;
-}
+};
 
 export namespace UrlParams {
     export type Storage = {

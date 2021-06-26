@@ -26,6 +26,14 @@ export const storagesApi = createApi({
             query: (id) => `storage/${id}`,
             providesTags: (_, __, id) => [{ type: 'Storages', id }],
         }),
+        addStorage: builder.mutation<Storage, Partial<Storage>>({
+            query: ({ name, imageId }) => ({
+                url: 'storage',
+                method: 'POST',
+                body: { name, imageId },
+            }),
+            invalidatesTags: [{ type: 'Storages', id: 'LIST' }],
+        }),
         deleteStorage: builder.mutation<void, number>({
             query: (storageId) => ({
                 url: `storage/${storageId}`,
@@ -42,4 +50,5 @@ export const {
     useGetAllStoragesQuery,
     useGetStorageByIdQuery,
     useDeleteStorageMutation,
+    useAddStorageMutation,
 } = storagesApi;

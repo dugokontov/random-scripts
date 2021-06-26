@@ -4,12 +4,18 @@ import { StoragePage } from './features/storage/StoragePage';
 import { Storages } from './features/storages/Storages';
 import { NewSectionPage } from './features/section/NewSectionPage';
 import { NewItemPage } from './features/item/NewItemPage';
+import { NewStoragePage } from './features/storage/NewStoragePage';
 
 function App() {
     return (
         <Router>
             <Switch>
                 <Route exact path="/" component={Storages} />
+                <Route
+                    exact
+                    path="/storage"
+                    component={NewStoragePage}
+                />
                 <Route
                     exact
                     path="/storage/:storageId"

@@ -5,6 +5,7 @@ const getDb = require('../helper/db');
 const { log } = require('../helper/util');
 
 const router = express.Router();
+router.use(express.json());
 
 /**
  * @param {express.Request} req
@@ -24,6 +25,33 @@ router.get('/', async (req, res) => {
         imageId: row.image_id,
     }));
     res.status(200).json(resultsToReturn);
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.post('/', async (req, res) => {
+    /** @type {{name: string, imageId: number}} */
+    const { name, imageId } = req.body;
+    // TODO check all fields
+    const db = await getDb();
+    let storageId;
+    try {
+        const { lastID } = await db.run(
+            SQL`
+            INSERT INTO storage (name, image_id)
+            VALUES (${name}, ${imageId})`
+        );
+        itemId = lastID;
+    } catch (error) {
+        throw new Error(error);
+    }
+    res.status(200).json({
+        id: itemId,
+        name,
+        imageId,
+    });
 });
 
 /**

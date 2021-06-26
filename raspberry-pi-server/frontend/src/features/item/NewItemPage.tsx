@@ -7,7 +7,7 @@ import { useGetStorageByIdQuery } from '../../app/storagesApi';
 import { ImageIds, ItemPayload } from '../../app/types';
 import { getErrorMessage } from '../../helpers/errorMessage';
 import { Loader } from '../loader/Loader';
-import { AddSection } from '../storage/AddSection';
+import { AddSection } from '../section/AddSection';
 import { NewItem } from './NewItem';
 import { NewItemBreadcrumbs } from './NewItemBreadcrumbs';
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Section, Storage as StorageType } from '../../app/types';
-import { AddSection } from './AddSection';
+import { AddSection } from '../section/AddSection';
 import { SectionViewer } from '../section/SectionViewer';
 import { ItemsLoader } from '../items/ItemsLoader';
 import { AddItem } from '../item/AddItem';
@@ -31,7 +31,7 @@ export function Storage({ storage, sections }: Props) {
                 </div>
             </div>
             <div className="row mb-2">
-                <div className="col">
+                <div className="d-grid gap-2 d-md-flex">
                     <AddSection storageId={storage.id} />
                     <DeleteStorage storageId={storage.id} />
                 </div>
