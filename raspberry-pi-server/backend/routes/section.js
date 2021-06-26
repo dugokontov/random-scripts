@@ -68,5 +68,26 @@ router.post('/', async (req, res) => {
         position,
     });
 });
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.delete('/:sectionId', async (req, res) => {
+    const sectionId = parseInt(req.params.sectionId, 10);
+    if (Number.isNaN(sectionId)) {
+        log('Wrong id sent', req.param.sectionId);
+        return res.status(400).send('Wrong param sent');
+    }
+    // TODO: check that all items are removed first
+    const db = await getDb();
+    try {
+        await db.run(SQL`
+        DELETE FROM section
+        WHERE id = ${sectionId}`);
+    } catch (error) {
+        throw new Error(error);
+    }
+    res.status(204).send();
+});
 
 module.exports = router;

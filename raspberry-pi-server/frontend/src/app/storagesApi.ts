@@ -5,7 +5,9 @@ import { Storage } from './types';
 export const storagesApi = createApi({
     reducerPath: 'storagesApi',
     tagTypes: ['Storages'],
-    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api` }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api`,
+    }),
     endpoints: (builder) => ({
         getAllStorages: builder.query<Storage[], void>({
             query: () => `storage`,
@@ -22,11 +24,22 @@ export const storagesApi = createApi({
         }),
         getStorageById: builder.query<Storage, number>({
             query: (id) => `storage/${id}`,
-            providesTags: (result, error, id) => [{ type: 'Storages', id }],
+            providesTags: (_, __, id) => [{ type: 'Storages', id }],
+        }),
+        deleteStorage: builder.mutation<void, number>({
+            query: (storageId) => ({
+                url: `storage/${storageId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['Storages'],
         }),
     }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAllStoragesQuery, useGetStorageByIdQuery } = storagesApi;
+export const {
+    useGetAllStoragesQuery,
+    useGetStorageByIdQuery,
+    useDeleteStorageMutation,
+} = storagesApi;

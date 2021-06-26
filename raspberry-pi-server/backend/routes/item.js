@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
     WHERE s.storage_id = ${storageId}`;
 
     if (!Number.isNaN(sectionId)) {
-        query.append(SQL`and i.section_id = ${sectionId}`);
+        query.append(SQL` and i.section_id = ${sectionId}`);
     }
 
     const db = await getDb();
@@ -60,7 +60,10 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     /** @type {{sectionId: string, name: string, description: string, imageIds: string}} */
     const { sectionId, name, description, imageIds } = req.body;
-    const numberImageIds = imageIds.split(',').filter(a => a.trim()).map(Number);
+    const numberImageIds = imageIds
+        .split(',')
+        .filter((a) => a.trim())
+        .map(Number);
     // TODO check all fields
     const db = await getDb();
     let itemId;
@@ -95,6 +98,48 @@ router.post('/', async (req, res) => {
         description,
         imageIds: numberImageIds,
     });
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.delete('/:itemId', async (req, res) => {
+    const itemId = parseInt(req.params.itemId, 10);
+    if (Number.isNaN(itemId)) {
+        log('Wrong id sent', req.param.itemId);
+        return res.status(400).send('Wrong param sent');
+    }
+    const db = await getDb();
+    try {
+        /** @type {{image_id: number}[]} */
+        const resultImageIds = await db.all(SQL`
+            SELECT image_id
+            FROM item_image
+            WHERE item_id = ${itemId}`);
+        const imageIds = resultImageIds.map((row) => row.image_id);
+        const deleteItemImageQuery = SQL`
+            DELETE FROM item_image
+            WHERE 1 = 2`;
+        imageIds.forEach((imageId) =>
+            deleteItemImageQuery.append(SQL` OR image_id = ${imageId}`)
+        );
+        await db.run(deleteItemImageQuery);
+        const deleteImageQuery = SQL`
+            DELETE FROM image
+            WHERE 1 = 2`;
+        imageIds.forEach((imageId) =>
+            deleteImageQuery.append(SQL` OR id = ${imageId}`)
+        );
+        await db.run(deleteImageQuery);
+        await db.run(SQL`
+            DELETE FROM item
+            WHERE id = ${itemId}`);
+    } catch (error) {
+        console.error(error);
+        throw new Error(error);
+    }
+    res.status(204).send();
 });
 
 module.exports = router;

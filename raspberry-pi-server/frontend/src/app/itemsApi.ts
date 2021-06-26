@@ -42,14 +42,34 @@ export const itemsApi = createApi({
                     imageIds: payload.imageIds?.join(',') ?? '',
                 },
             }),
-            invalidatesTags: (result, error, payload) => [
+            invalidatesTags: (_, __, { storageId, sectionId }) => [
                 {
                     type: 'Items',
-                    id: `${payload.storageId}.${payload.sectionId}`,
+                    id: `${storageId}.${sectionId}`,
                 },
                 {
                     type: 'Items',
-                    id: `${payload.storageId}.${undefined}`,
+                    id: `${storageId}.${undefined}`,
+                },
+            ],
+        }),
+        deleteItem: builder.mutation<
+            void,
+            { storageId: number; sectionId: number; itemId: number }
+        >({
+            query: ({ itemId }) => ({
+                url: `item/${itemId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (_, __, { storageId, sectionId, itemId }) => [
+                { type: 'Items', id: itemId },
+                {
+                    type: 'Items',
+                    id: `${storageId}.${sectionId}`,
+                },
+                {
+                    type: 'Items',
+                    id: `${storageId}.${undefined}`,
                 },
             ],
         }),
@@ -58,5 +78,8 @@ export const itemsApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetItemsByStorageIdSectionIdQuery, useAddItemMutation } =
-    itemsApi;
+export const {
+    useGetItemsByStorageIdSectionIdQuery,
+    useAddItemMutation,
+    useDeleteItemMutation,
+} = itemsApi;

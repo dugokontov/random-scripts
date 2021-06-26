@@ -4,6 +4,8 @@ import { AddSection } from './AddSection';
 import { SectionViewer } from '../section/SectionViewer';
 import { ItemsLoader } from '../items/ItemsLoader';
 import { AddItem } from '../item/AddItem';
+import { DeleteSection } from '../section/DeleteSection';
+import { DeleteStorage } from './DeleteStorage';
 
 type Props = {
     storage: StorageType;
@@ -31,6 +33,7 @@ export function Storage({ storage, sections }: Props) {
             <div className="row mb-2">
                 <div className="col">
                     <AddSection storageId={storage.id} />
+                    <DeleteStorage storageId={storage.id} />
                 </div>
             </div>
             <div className="row mb-2">
@@ -51,8 +54,14 @@ export function Storage({ storage, sections }: Props) {
                 </div>
             </div>
             <div className="row mb-2">
-                <div className="col">
+                <div className="col d-grid gap-2 d-md-flex">
                     <AddItem storageId={storage.id} />
+                    {selectedSectionId && (
+                        <DeleteSection
+                            sectionId={selectedSectionId}
+                            storageId={storage.id}
+                        />
+                    )}
                 </div>
             </div>
             <div className="row mb-2">

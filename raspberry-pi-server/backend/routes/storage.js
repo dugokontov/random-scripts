@@ -45,12 +45,47 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         throw new Error(error);
     }
+    if (!result) {
+        return res.status(404).send();
+    }
     const resultToReturn = {
         id: result.id,
         name: result.name,
         imageId: result.image_id,
     };
     res.status(200).json(resultToReturn);
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.delete('/:storageId', async (req, res) => {
+    const storageId = parseInt(req.params.storageId, 10);
+    if (Number.isNaN(storageId)) {
+        log('Wrong id sent', req.param.storageId);
+        return res.status(400).send('Wrong param sent');
+    }
+    const db = await getDb();
+    try {
+        /** @type {{image_id: number}} */
+        const resultImageId = await db.get(SQL`
+            SELECT image_id
+            FROM storage
+            WHERE id = ${storageId}`);
+
+        await db.run(SQL`
+            DELETE FROM image
+            WHERE id = ${resultImageId.image_id}`);
+
+        await db.run(SQL`
+            DELETE FROM storage
+            WHERE id = ${storageId}`);
+    } catch (error) {
+        console.error(error);
+        throw new Error(error);
+    }
+    res.status(204).send();
 });
 
 module.exports = router;

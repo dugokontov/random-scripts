@@ -1,6 +1,7 @@
 import React from 'react';
 import { Item, Section } from '../../app/types';
-import { Image } from '../image/Image';
+import { ImageSlide } from '../image/ImageSlide';
+import { DeleteItems } from '../item/DeleteItem';
 
 type Props = {
     items: Item[];
@@ -28,18 +29,15 @@ export function Items({ items, sections }: Props) {
                         <td>{description}</td>
                         <td>{getSectionName(sectionId)}</td>
                         <td>
-                            {imageIds.map((imageId) => (
-                                <Image
-                                    key={imageId}
-                                    imageId={imageId}
-                                    style={{
-                                        maxWidth: '45%',
-                                        marginLeft: '2px',
-                                    }}
-                                />
-                            ))}
+                            <ImageSlide id={`is-${id}`} imageIds={imageIds} />
                         </td>
-                        <td></td>
+                        <td>
+                            <DeleteItems
+                                itemId={id}
+                                sectionId={sectionId}
+                                storageId={sections[0].storageId}
+                            />
+                        </td>
                     </tr>
                 ))}
             </tbody>

@@ -5,6 +5,7 @@ import { Loader } from '../loader/Loader';
 import { Storage } from './Storage';
 import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
 import { useStorageIdParams } from '../../app/hooks';
+import { getErrorMessage } from '../../helpers/errorMessage';
 
 export function StoragePage() {
     const storageId = useStorageIdParams();
@@ -28,8 +29,7 @@ export function StoragePage() {
     } else if (storageError || sectionsError || !storage || !sections) {
         content = (
             <div className="alert alert-danger" role="alert">
-                {storageError ??
-                    sectionsError ??
+                {getErrorMessage(storageError, sectionsError) ??
                     'Storage with this id not found'}
             </div>
         );

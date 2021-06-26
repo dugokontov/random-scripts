@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGetItemsByStorageIdSectionIdQuery } from '../../app/itemsApi';
 import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
+import { getErrorMessage } from '../../helpers/errorMessage';
 import { Loader } from '../loader/Loader';
 import { Items } from './Items';
 
@@ -30,7 +31,8 @@ export function ItemsLoader({ storageId, sectionId }: Props) {
     } else if (error || sectionsError || !items || !sections) {
         return (
             <div className="alert alert-danger" role="alert">
-                {error ?? sectionsError ?? 'Items with this id not found'}
+                {getErrorMessage(error, sectionsError) ??
+                    'Items with this id not found'}
             </div>
         );
     }

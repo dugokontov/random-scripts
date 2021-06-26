@@ -5,6 +5,7 @@ import { useAddItemMutation } from '../../app/itemsApi';
 import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
 import { useGetStorageByIdQuery } from '../../app/storagesApi';
 import { ImageIds, ItemPayload } from '../../app/types';
+import { getErrorMessage } from '../../helpers/errorMessage';
 import { Loader } from '../loader/Loader';
 import { AddSection } from '../storage/AddSection';
 import { NewItem } from './NewItem';
@@ -74,11 +75,12 @@ export function NewItemPage() {
     ) {
         content = (
             <div className="alert alert-danger" role="alert">
-                {sectionsError ??
-                    storageError ??
-                    imageUploadError ??
-                    addNewItemError ??
-                    'Storage with this id not found'}
+                {getErrorMessage(
+                    sectionsError,
+                    storageError,
+                    imageUploadError,
+                    addNewItemError
+                ) ?? 'Storage with this id not found'}
             </div>
         );
     } else if (sections.length === 0) {

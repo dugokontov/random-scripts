@@ -5,20 +5,22 @@ import { Section } from './types';
 export const sectionsApi = createApi({
     reducerPath: 'sectionsApi',
     tagTypes: ['Sections'],
-    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api` }),
+    baseQuery: fetchBaseQuery({
+        baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api`,
+    }),
     endpoints: (builder) => ({
         getSectionsByStorageId: builder.query<Section[], number>({
             query: (storageId) => `section?storageId=${storageId}`,
             providesTags: (result, error, storageId) =>
                 result
                     ? [
-                          ...result.map(({ id, storageId }) => ({
+                          ...result.map(({ id }) => ({
                               type: 'Sections' as const,
-                              id: `${storageId}.${id}`,
+                              id: id,
                           })),
-                          { type: 'Sections', id: storageId },
+                          { type: 'Sections', id: `storage${storageId}` },
                       ]
-                    : [{ type: 'Sections', id: storageId }],
+                    : [{ type: 'Sections', id: `storage${storageId}` }],
         }),
         addSection: builder.mutation<Section, Partial<Section>>({
             query: (body) => ({
@@ -26,11 +28,21 @@ export const sectionsApi = createApi({
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: (result, error, section) => [
-                {
-                    type: 'Sections',
-                    id: section.storageId,
-                },
+            invalidatesTags: (result, error, { storageId }) => [
+                { type: 'Sections', id: `storage${storageId}` },
+            ],
+        }),
+        deleteSection: builder.mutation<
+            void,
+            { storageId: number; sectionId: number }
+        >({
+            query: ({ sectionId }) => ({
+                url: `section/${sectionId}`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: (_, __, { storageId, sectionId }) => [
+                { type: 'Sections', id: sectionId },
+                { type: 'Sections', id: `storage${storageId}` },
             ],
         }),
     }),
@@ -38,5 +50,8 @@ export const sectionsApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetSectionsByStorageIdQuery, useAddSectionMutation } =
-    sectionsApi;
+export const {
+    useGetSectionsByStorageIdQuery,
+    useAddSectionMutation,
+    useDeleteSectionMutation,
+} = sectionsApi;
