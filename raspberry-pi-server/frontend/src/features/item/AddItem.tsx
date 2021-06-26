@@ -4,11 +4,11 @@ import { Plus } from '../icon/Plus';
 
 type Props = { storageId: number };
 
-export function AddSection({ storageId }: Props) {
+export function AddItem({ storageId }: Props) {
     return (
-        <Link to={`/storage/${storageId}/section`} className="btn btn-primary">
+        <Link to={`/storage/${storageId}/item`} className="btn btn-primary">
             <Plus />
-            Add new section
+            Add new item
         </Link>
     );
 }

@@ -16,6 +16,23 @@ export type Section = {
     position: Position;
 };
 
+export type ImageIds = number[];
+
+export type Item = {
+    id: number;
+    sectionId: number;
+    name: string;
+    description?: string;
+    imageIds: ImageIds;
+};
+
+export type ItemPayload = {
+    sectionId: number;
+    name: string;
+    description?: string;
+    images: FileList | null;
+}
+
 export namespace UrlParams {
     export type Storage = {
         storageId: string;

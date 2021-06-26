@@ -1,13 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Storage } from './types';
 
-export const BASE_URL = 'http://localhost:3000';
-
 // Define a service using a base URL and expected endpoints
 export const storagesApi = createApi({
     reducerPath: 'storagesApi',
     tagTypes: ['Storages'],
-    baseQuery: fetchBaseQuery({ baseUrl: `${BASE_URL}/api` }),
+    baseQuery: fetchBaseQuery({ baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api` }),
     endpoints: (builder) => ({
         getAllStorages: builder.query<Storage[], void>({
             query: () => `storage`,
@@ -22,7 +20,7 @@ export const storagesApi = createApi({
                       ]
                     : [{ type: 'Storages', id: 'LIST' }],
         }),
-        getStorageById: builder.query<Storage, string>({
+        getStorageById: builder.query<Storage, number>({
             query: (id) => `storage/${id}`,
             providesTags: (result, error, id) => [{ type: 'Storages', id }],
         }),

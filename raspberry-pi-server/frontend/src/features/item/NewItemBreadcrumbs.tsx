@@ -6,7 +6,7 @@ type Props = {
     storageName?: string;
 };
 
-export function NewSectionBreadcrumbs({
+export function NewItemBreadcrumbs({
     storageId,
     storageName = 'Storage',
 }: Props) {
@@ -20,7 +20,7 @@ export function NewSectionBreadcrumbs({
                     <Link to={`/storage/${storageId}`}>{storageName}</Link>
                 </li>
                 <li className="breadcrumb-item active" aria-current="page">
-                    New section
+                    New item
                 </li>
             </ol>
         </nav>

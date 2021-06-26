@@ -1,52 +1,68 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { UrlParams } from '../../app/types';
-import { StorageBreadcrumbs } from './StorageBreadcrumbs';
+import React, { useState } from 'react';
+import { Section, Storage as StorageType } from '../../app/types';
 import { AddSection } from './AddSection';
-import { useGetStorageByIdQuery } from '../../app/storagesApi';
-import { Loader } from '../loader/Loader';
-import { Image } from '../image/Image';
+import { SectionViewer } from '../section/SectionViewer';
+import { ItemsLoader } from '../items/ItemsLoader';
+import { AddItem } from '../item/AddItem';
 
-export function Storage() {
-    const { storageId } = useParams<UrlParams.Storage>();
-    const { data, isLoading, error } = useGetStorageByIdQuery(storageId);
-    let content: React.ReactNode;
-    if (isLoading) {
-        content = (
-            <div className="row">
-                <Loader />
-            </div>
-        );
-    } else if (error || !data) {
-        content = (
-            <div className="alert alert-danger" role="alert">
-                {error ?? 'Storage with this id not found'}
-            </div>
-        );
-    } else {
-        content = (
-            <>
-                <div className="row">
-                    <div className="col">
-                        <AddSection storageId={storageId} />
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col">
-                        <Image imageId={data.imageId} />
-                    </div>
-                </div>
-            </>
-        );
-    }
+type Props = {
+    storage: StorageType;
+    sections: Section[];
+};
+
+export function Storage({ storage, sections }: Props) {
+    const [selectedSectionId, setSelectedSectionId] = useState<
+        number | undefined
+    >();
+    const selectSelectionId = (sectionId: number) => {
+        if (sectionId === selectedSectionId) {
+            setSelectedSectionId(undefined);
+        } else {
+            setSelectedSectionId(sectionId);
+        }
+    };
     return (
-        <div className="container">
-            <div className="row">
+        <>
+            <div className="row mb-2">
                 <div className="col">
-                    <StorageBreadcrumbs storageName={data?.name} />
+                    <h1>{storage.name}</h1>
                 </div>
             </div>
-            {content}
-        </div>
+            <div className="row mb-2">
+                <div className="col">
+                    <AddSection storageId={storage.id} />
+                </div>
+            </div>
+            <div className="row mb-2">
+                <div className="col">
+                    <SectionViewer
+                        sections={sections}
+                        storage={storage}
+                        onSectionClick={selectSelectionId}
+                        selectedSectionIds={
+                            selectedSectionId ? [selectedSectionId] : []
+                        }
+                    />
+                </div>
+            </div>
+            <div className="row mb-2">
+                <div className="col">
+                    <h2>Items</h2>
+                </div>
+            </div>
+            <div className="row mb-2">
+                <div className="col">
+                    <AddItem storageId={storage.id} />
+                </div>
+            </div>
+            <div className="row mb-2">
+                <div className="col">
+                    <ItemsLoader
+                        sectionId={selectedSectionId}
+                        storageId={storage.id}
+                    />
+                </div>
+            </div>
+        </>
     );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Position, UndefinedPosition } from '../../app/types';
+import { Position, Section, UndefinedPosition } from '../../app/types';
 import { Image } from '../image/Image';
 import { SectionHolder } from './SectionHolder';
 import { SectionRect } from './SectionRect';
@@ -10,6 +10,7 @@ type Props = {
     position: Position | UndefinedPosition;
     onChange: (newPosition: Position | UndefinedPosition) => void;
     sectionName: string;
+    otherSections: Section[];
 };
 
 export function SectionSelector({
@@ -17,8 +18,9 @@ export function SectionSelector({
     position,
     onChange,
     sectionName,
+    otherSections,
 }: Props) {
-    const updateImage = (xPercent: number, yPercent: number) => {
+    const updateSection = (xPercent: number, yPercent: number) => {
         if (position[0] == null || position[2] != null) {
             // first point or redraw
             return onChange([xPercent, yPercent, undefined, undefined]);
@@ -50,10 +52,21 @@ export function SectionSelector({
                                 const xPercent = (x * 100) / rect.width;
                                 const yPercent = (y * 100) / rect.height;
 
-                                updateImage(xPercent, yPercent);
+                                updateSection(xPercent, yPercent);
                             }}
                         />
-                        <SectionRect position={position} name={sectionName} />
+                        {otherSections.map(({ position, name, id }) => (
+                            <SectionRect
+                                key={id}
+                                position={position}
+                                name={name}
+                            />
+                        ))}
+                        <SectionRect
+                            position={position}
+                            name={sectionName}
+                            active
+                        />
                     </SectionHolder>
                 </div>
             </div>

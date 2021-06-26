@@ -1,7 +1,5 @@
 import React, { CSSProperties } from 'react';
 
-import { BASE_URL } from '../../app/storagesApi';
-
 type Props = { imageId: number } & React.ImgHTMLAttributes<HTMLImageElement>;
 
 export function Image({ imageId, alt, ...rest }: Props) {
@@ -10,7 +8,7 @@ export function Image({ imageId, alt, ...rest }: Props) {
     };
     return (
         <img
-            src={`${BASE_URL}/api/image/${imageId}`}
+            src={`${process.env.REACT_APP_BACKEND_URL}/api/image/${imageId}`}
             style={style}
             alt={alt}
             {...rest}

@@ -5,9 +5,12 @@ import styles from './SectionRect.module.css';
 type Props = {
     position: Position | UndefinedPosition;
     name: string;
+    id?: number;
+    onClick?: (sectionId: number) => void;
+    active?: boolean;
 };
 
-export function SectionRect({ position, name }: Props) {
+export function SectionRect({ position, name, id, onClick, active }: Props) {
     if (position[0] == null) {
         return null;
     }
@@ -26,8 +29,20 @@ export function SectionRect({ position, name }: Props) {
     if (width < 2) {
         displayName = '';
     }
+    let className = styles.rect;
+    if (active) {
+        className += ' ' + styles.active;
+    }
     return (
-        <div style={style} className={styles.rect}>
+        <div
+            style={style}
+            className={className}
+            onClick={() => {
+                if (id && onClick) {
+                    onClick(id);
+                }
+            }}
+        >
             {displayName}
         </div>
     );

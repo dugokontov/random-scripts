@@ -1,15 +1,12 @@
 import React from 'react';
+import { StorageBreadcrumbs } from './StorageBreadcrumbs';
 import { useGetStorageByIdQuery } from '../../app/storagesApi';
 import { Loader } from '../loader/Loader';
-import { NewSection } from './NewSection';
-import { NewSectionBreadcrumbs } from './NewSectionBreadcrumbs';
-import {
-    useAddSectionMutation,
-    useGetSectionsByStorageIdQuery,
-} from '../../app/sectionsApi';
+import { Storage } from './Storage';
+import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
 import { useStorageIdParams } from '../../app/hooks';
 
-export function NewSectionPage() {
+export function StoragePage() {
     const storageId = useStorageIdParams();
     const {
         data: storage,
@@ -18,52 +15,32 @@ export function NewSectionPage() {
     } = useGetStorageByIdQuery(storageId);
     const {
         data: sections,
-        isLoading: isLoadingSections,
+        isLoading: isSectionsLoading,
         error: sectionsError,
     } = useGetSectionsByStorageIdQuery(storageId);
-    const [
-        addSection,
-        { isLoading: isAddSectionLoading, error: addSectionError },
-    ] = useAddSectionMutation();
     let content: React.ReactNode;
-    if (isLoadingStorage || isAddSectionLoading || isLoadingSections) {
+    if (isLoadingStorage || isSectionsLoading) {
         content = (
             <div className="row">
                 <Loader />
             </div>
         );
-    } else if (
-        storageError ||
-        sectionsError ||
-        addSectionError ||
-        !storage ||
-        !sections
-    ) {
+    } else if (storageError || sectionsError || !storage || !sections) {
         content = (
             <div className="alert alert-danger" role="alert">
                 {storageError ??
-                    addSectionError ??
                     sectionsError ??
                     'Storage with this id not found'}
             </div>
         );
     } else {
-        content = (
-            <NewSection
-                storage={storage}
-                sections={sections}
-                onAddSection={addSection}
-            />
-        );
+        content = <Storage storage={storage} sections={sections} />;
     }
     return (
         <div className="container">
             <div className="row">
                 <div className="col">
-                    <NewSectionBreadcrumbs
-                        storageId={storageId}
-                        storageName={storage?.name}
-                    />
+                    <StorageBreadcrumbs storageName={storage?.name} />
                 </div>
             </div>
             {content}
