@@ -10,6 +10,9 @@ type Props = {
 };
 
 export function ImageAndSlider({ id, imageIds }: Props) {
+    if (imageIds.length === 0) {
+        return null;
+    }
     const firstImageId = imageIds[0];
 
     return (

@@ -16,3 +16,8 @@ export const useStorageIdParams = () => {
     }
     return id;
 };
+
+export const useSearchQueryParams = () => {
+    const { query } = useParams<UrlParams.SearchQuery>();
+    return query;
+};

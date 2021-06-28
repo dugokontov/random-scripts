@@ -38,8 +38,23 @@ export type ItemPayload = {
     images: FileList | null;
 };
 
+export type ItemSearch = {
+    id: number;
+    sectionId: number;
+    name: string;
+    description: string;
+    imageIds: number[];
+    sectionName: string;
+    storageId: number;
+    storageName: string;
+    imageId: number;
+};
+
 export namespace UrlParams {
     export type Storage = {
         storageId: string;
+    };
+    export type SearchQuery = {
+        query: string;
     };
 }

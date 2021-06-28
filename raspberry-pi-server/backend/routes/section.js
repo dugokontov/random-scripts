@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
         const { lastID } = await db.run(
             SQL`
             INSERT INTO section (storage_id, name, position)
-            VALUES (${storageId}, ${name}, ${JSON.stringify(position)})`
+            VALUES (${storageId}, ${name.trim()}, ${JSON.stringify(position)})`
         );
         sectionId = lastID;
     } catch (error) {

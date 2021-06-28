@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Item } from './types';
+import { Item, ItemSearch } from './types';
 
 // Define a service using a base URL and expected endpoints
 export const itemsApi = createApi({
@@ -30,6 +30,9 @@ export const itemsApi = createApi({
                           { type: 'Items', id: storageIdSectionId },
                       ]
                     : [{ type: 'Items', id: storageIdSectionId }],
+        }),
+        searchItem: builder.query<ItemSearch[], string>({
+            query: (search) => `item/search?q=${search}`,
         }),
         addItem: builder.mutation<Item, Partial<Item> & { storageId: number }>({
             query: (payload) => ({
@@ -82,4 +85,5 @@ export const {
     useGetItemsByStorageIdSectionIdQuery,
     useAddItemMutation,
     useDeleteItemMutation,
+    useSearchItemQuery,
 } = itemsApi;

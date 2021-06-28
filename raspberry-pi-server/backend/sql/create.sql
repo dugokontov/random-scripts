@@ -49,4 +49,27 @@ CREATE TABLE item_image (
             ON DELETE CASCADE
             ON UPDATE NO ACTION
 
-)
+);
+
+-- virtual table used for full-text search
+CREATE VIRTUAL TABLE item_fts USING fts5 (
+    name,
+    description,
+    content=item
+);
+
+CREATE TRIGGER item_fts_insert AFTER INSERT ON item
+BEGIN
+    INSERT INTO item_fts (rowid, name, description) VALUES (new.rowid, new.name, new.description);
+END;
+
+CREATE TRIGGER item_fts_delete AFTER DELETE ON item
+BEGIN
+    INSERT INTO item_fts (item_fts, rowid, name, description) VALUES ('delete', old.rowid, old.name, old.description);
+END;
+
+CREATE TRIGGER item_fts_update AFTER UPDATE ON item
+BEGIN
+    INSERT INTO item_fts (item_fts, rowid, name, description) VALUES ('delete', old.rowid, old.name, old.description);
+    INSERT INTO item_fts (rowid, name, description) VALUES (new.rowid, new.name, new.description);
+END;

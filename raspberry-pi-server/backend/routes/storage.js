@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
         const { lastID } = await db.run(
             SQL`
             INSERT INTO storage (name, image_id)
-            VALUES (${name}, ${imageId})`
+            VALUES (${name.trim()}, ${imageId})`
         );
         itemId = lastID;
     } catch (error) {
