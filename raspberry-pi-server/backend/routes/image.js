@@ -37,7 +37,10 @@ router.post('/', async (req, res) => {
                     fit: 'contain',
                     withoutEnlargement: true,
                 })
-                .png()
+                .jpeg({
+                    mozjpeg: true,
+                    chromaSubsampling: '4:4:4',
+                })
                 .toBuffer();
             const thumbnail = await sharp(rawImage.data)
                 .rotate()
@@ -46,7 +49,10 @@ router.post('/', async (req, res) => {
                     fit: 'contain',
                     withoutEnlargement: true,
                 })
-                .png()
+                .jpeg({
+                    mozjpeg: true,
+                    chromaSubsampling: '4:4:4',
+                })
                 .toBuffer();
             const { lastID } = await db.run(
                 'INSERT INTO image (image, thumbnail) VALUES(?, ?);',
@@ -85,7 +91,7 @@ router.get('/:imageId', async (req, res) => {
         res.status(404).send('File not found');
         return;
     }
-    res.header('Content-Type', 'image/png');
+    res.header('Content-Type', 'image/jpeg');
     res.end(result.image);
 });
 
