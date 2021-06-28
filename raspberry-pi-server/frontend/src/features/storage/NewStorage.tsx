@@ -23,32 +23,32 @@ export function NewStorage({ onAddStorage }: Props) {
     return (
         <form onSubmit={createNewStorage}>
             <div className="mb-3">
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="storage-name" className="form-label">
                     Storage name
                 </label>
                 <input
                     type="text"
                     className="form-control"
-                    id="name"
+                    id="storage-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
             </div>
             <div className="mb-3">
-                <label htmlFor="images" className="form-label">
+                <label htmlFor="storage-images" className="form-label">
                     Select images
                 </label>
                 <input
                     type="file"
-                    name="images"
-                    id="images"
+                    name="storage-images"
+                    id="storage-images"
                     className="form-control"
                     onChange={(e) => setImage(e.target.files)}
                 />
             </div>
             <div className="d-grid gap-2 d-md-flex mb-3">
                 <button type="submit" className="btn btn-primary">
-                    Add item
+                    Add storage
                 </button>
                 <Link className="btn btn-secondary" to="/">
                     Cancel

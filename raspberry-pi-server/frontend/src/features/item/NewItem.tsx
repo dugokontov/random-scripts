@@ -40,37 +40,37 @@ export function NewItem({ storage, sections, onAddItem }: Props) {
                 selectedSectionIds={[sectionId]}
             />
             <div className="mb-3">
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="item-name" className="form-label">
                     Item name
                 </label>
                 <input
                     type="text"
                     className="form-control"
-                    id="name"
+                    id="item-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
             </div>
             <div className="mb-3">
-                <label htmlFor="description" className="form-label">
+                <label htmlFor="item-description" className="form-label">
                     Item description
                 </label>
                 <input
                     type="text"
                     className="form-control"
-                    id="description"
+                    id="item-description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                 />
             </div>
             <div className="mb-3">
-                <label htmlFor="images" className="form-label">
+                <label htmlFor="item-images" className="form-label">
                     Select images
                 </label>
                 <input
                     type="file"
-                    name="images"
-                    id="images"
+                    name="item-images"
+                    id="item-images"
                     className="form-control"
                     multiple
                     onChange={(e) => setImages(e.target.files)}

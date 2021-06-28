@@ -1,12 +1,12 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const SQL = require('sql-template-strings');
+const sharp = require('sharp');
 
 const getDb = require('../helper/db');
 const { log } = require('../helper/util');
 
 const router = express.Router();
-
 /**
  * @param {express.Request} req
  * @param {express.Response} res
@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
 
     // when only one file is uplaoded express-fileupload treat that as an
     // object. If more than one, then an array.
-    // make sure we always work with an array, even if only one file us uploaded
+    // make sure we always work with an array, even if only one file is uploaded
     if (!Array.isArray(uploadImage)) {
         uploadImage = [uploadImage];
     }
@@ -29,10 +29,29 @@ router.post('/', async (req, res) => {
     const db = await getDb();
     const imageIds = [];
     try {
-        for (const image of uploadImage) {
+        for (const rawImage of uploadImage) {
+            const image = await sharp(rawImage.data)
+                .rotate()
+                .resize({
+                    width: 1300,
+                    fit: 'contain',
+                    withoutEnlargement: true,
+                })
+                .png()
+                .toBuffer();
+            const thumbnail = await sharp(rawImage.data)
+                .rotate()
+                .resize({
+                    width: 256,
+                    fit: 'contain',
+                    withoutEnlargement: true,
+                })
+                .png()
+                .toBuffer();
             const { lastID } = await db.run(
-                'INSERT INTO image (image) VALUES(?);',
-                image.data
+                'INSERT INTO image (image, thumbnail) VALUES(?, ?);',
+                image,
+                thumbnail
             );
             log('Inserted new image. ID:', lastID);
             imageIds.push(lastID);
@@ -66,8 +85,36 @@ router.get('/:imageId', async (req, res) => {
         res.status(404).send('File not found');
         return;
     }
-    res.header('Content-Type', 'image/jpeg');
+    res.header('Content-Type', 'image/png');
     res.end(result.image);
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.get('/:imageId/thumbnail', async (req, res) => {
+    const imageId = parseInt(req.params.imageId, 10);
+    if (Number.isNaN(imageId)) {
+        log('Wrong id sent', req.param.imageId);
+        return res.status(400).send('Wrong param sent');
+    }
+
+    const db = await getDb();
+    let result;
+    try {
+        result = await db.get(
+            SQL`SELECT thumbnail FROM image WHERE id=${imageId}`
+        );
+    } catch (e) {
+        throw new Error(e);
+    }
+    if (!result) {
+        res.status(404).send('File not found');
+        return;
+    }
+    res.header('Content-Type', 'image/png');
+    res.end(result.thumbnail);
 });
 
 module.exports = router;

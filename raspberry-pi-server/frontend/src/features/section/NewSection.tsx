@@ -40,13 +40,13 @@ export function NewSection({ storage, sections, onAddSection }: Props) {
                 otherSections={sections}
             />
             <div className="mb-3">
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="section-name" className="form-label">
                     Section name
                 </label>
                 <input
                     type="text"
                     className="form-control"
-                    id="name"
+                    id="section-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />

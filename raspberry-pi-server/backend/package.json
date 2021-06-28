@@ -8,6 +8,7 @@
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "express-fileupload": "^1.2.1",
+        "sharp": "^0.28.3",
         "sql-template-strings": "^2.2.2",
         "sqlite": "^4.0.23",
         "sqlite3": "^5.0.2",

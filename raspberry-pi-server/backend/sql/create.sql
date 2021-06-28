@@ -1,6 +1,7 @@
 CREATE TABLE image (
     id          INTEGER NOT NULL PRIMARY KEY,
-    image       BLOB
+    image       BLOB,
+    thumbnail   BLOB
 );
 
 CREATE TABLE storage (
