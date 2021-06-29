@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
         uploadImage = [uploadImage];
     }
 
-    log(`Upload complete. Uploaded ${uploadImage.length} file(s).`);
+    log(`Upload complete from ${req.ip}. Uploaded ${uploadImage.length} file(s).`);
     const db = await getDb();
     const imageIds = [];
     try {
