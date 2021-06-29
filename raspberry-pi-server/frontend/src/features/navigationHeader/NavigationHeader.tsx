@@ -5,11 +5,8 @@ import { NavigationStorages } from './NavigationStorages';
 
 export function NavigationHeader() {
     return (
-        <header className="navbar navbar-expand-lg navbar-dark bg-primary">
+        <header className="navbar navbar-expand-md navbar-dark bg-primary mb-3">
             <div className="container-fluid">
-                <Link to="/" className="navbar-brand">
-                    Storage organizer
-                </Link>
                 <button
                     className="navbar-toggler"
                     type="button"
