@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
         uploadImage = [uploadImage];
     }
 
+    log(`Upload complete. Uploaded ${uploadImage.length} file(s).`);
     const db = await getDb();
     const imageIds = [];
     try {
@@ -37,11 +38,9 @@ router.post('/', async (req, res) => {
                     fit: 'contain',
                     withoutEnlargement: true,
                 })
-                .jpeg({
-                    mozjpeg: true,
-                    chromaSubsampling: '4:4:4',
-                })
+                .jpeg({ mozjpeg: true, chromaSubsampling: '4:4:4' })
                 .toBuffer();
+            log('Rotate, resize and convert to JPG done.');
             const thumbnail = await sharp(rawImage.data)
                 .rotate()
                 .resize({
@@ -49,11 +48,9 @@ router.post('/', async (req, res) => {
                     fit: 'contain',
                     withoutEnlargement: true,
                 })
-                .jpeg({
-                    mozjpeg: true,
-                    chromaSubsampling: '4:4:4',
-                })
+                .jpeg({ mozjpeg: true, chromaSubsampling: '4:4:4' })
                 .toBuffer();
+            log('Thumbnail rotate, resize and convert to JPG done.');
             const { lastID } = await db.run(
                 'INSERT INTO image (image, thumbnail) VALUES(?, ?);',
                 image,
