@@ -59,8 +59,8 @@ router.post('/', async (req, res) => {
             log('Inserted new image. ID:', lastID);
             imageIds.push(lastID);
         }
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');

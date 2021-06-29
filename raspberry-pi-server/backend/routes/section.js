@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
             FROM section
             WHERE storage_id=${storageId}`
         );
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -61,8 +61,8 @@ router.post('/', async (req, res) => {
             VALUES (${storageId}, ${name.trim()}, ${JSON.stringify(position)})`
         );
         sectionId = lastID;
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -90,8 +90,8 @@ router.delete('/:sectionId', async (req, res) => {
         await db.run(SQL`
         DELETE FROM section
         WHERE id = ${sectionId}`);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');

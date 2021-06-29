@@ -39,8 +39,8 @@ router.get('/', async (req, res) => {
     let results;
     try {
         results = await db.all(query);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -77,8 +77,8 @@ router.post('/', async (req, res) => {
             VALUES (${sectionId}, ${name.trim()}, ${description?.trim()})`
         );
         itemId = lastID;
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -96,8 +96,8 @@ router.post('/', async (req, res) => {
             });
             await db.run(query);
         }
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -203,8 +203,8 @@ router.get('/search', async (req, res) => {
     let results;
     try {
         results = await db.all(query);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');

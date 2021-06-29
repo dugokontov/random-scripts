@@ -16,8 +16,8 @@ router.get('/', async (req, res) => {
     let results = [];
     try {
         results = await db.all('select id, name, image_id from storage');
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -47,8 +47,8 @@ router.post('/', async (req, res) => {
             VALUES (${name.trim()}, ${imageId})`
         );
         itemId = lastID;
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -76,8 +76,8 @@ router.get('/:id', async (req, res) => {
         result = await db.get(
             SQL`select id, name, image_id from storage where id=${id}`
         );
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
@@ -118,8 +118,8 @@ router.delete('/:storageId', async (req, res) => {
         await db.run(SQL`
             DELETE FROM storage
             WHERE id = ${storageId}`);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res
             .status(500)
             .send('SQL error. Please see logs for more details');
