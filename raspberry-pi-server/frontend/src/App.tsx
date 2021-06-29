@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { StoragePage } from './features/storage/StoragePage';
 import { Storages } from './features/storages/Storages';
 import { NewSectionPage } from './features/section/NewSectionPage';
@@ -10,7 +10,7 @@ import { NavigationHeader } from './features/navigationHeader/NavigationHeader';
 
 function App() {
     return (
-        <Router>
+        <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
             <NavigationHeader />
             <Switch>
                 <Route exact path="/" component={Storages} />
@@ -33,7 +33,7 @@ function App() {
 
                 <Route exact path="/search/:query" component={SearchPage} />
             </Switch>
-        </Router>
+        </BrowserRouter>
     );
 }
 
