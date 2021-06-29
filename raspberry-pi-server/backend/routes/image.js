@@ -60,7 +60,10 @@ router.post('/', async (req, res) => {
             imageIds.push(lastID);
         }
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
 
     res.status(200).json({ imageIds });
@@ -82,7 +85,10 @@ router.get('/:imageId', async (req, res) => {
     try {
         result = await db.get(SQL`SELECT image FROM image WHERE id=${imageId}`);
     } catch (e) {
-        throw new Error(e);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     if (!result) {
         res.status(404).send('File not found');
@@ -110,7 +116,10 @@ router.get('/:imageId/thumbnail', async (req, res) => {
             SQL`SELECT thumbnail FROM image WHERE id=${imageId}`
         );
     } catch (e) {
-        throw new Error(e);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     if (!result) {
         res.status(404).send('File not found');

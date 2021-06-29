@@ -2,7 +2,7 @@ const express = require('express');
 const SQL = require('sql-template-strings');
 
 const getDb = require('../helper/db');
-const { log } = require('../helper/util');
+const { log, error } = require('../helper/util');
 
 const router = express.Router();
 
@@ -30,7 +30,10 @@ router.get('/', async (req, res) => {
             WHERE storage_id=${storageId}`
         );
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
@@ -59,7 +62,10 @@ router.post('/', async (req, res) => {
         );
         sectionId = lastID;
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     res.status(200).json({
         id: sectionId,
@@ -85,7 +91,10 @@ router.delete('/:sectionId', async (req, res) => {
         DELETE FROM section
         WHERE id = ${sectionId}`);
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     res.status(204).send();
 });

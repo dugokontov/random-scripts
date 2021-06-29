@@ -3,7 +3,7 @@ const { SQLStatement } = require('sql-template-strings');
 const SQL = require('sql-template-strings');
 
 const getDb = require('../helper/db');
-const { log } = require('../helper/util');
+const { log, error } = require('../helper/util');
 
 const router = express.Router();
 router.use(express.json());
@@ -40,7 +40,10 @@ router.get('/', async (req, res) => {
     try {
         results = await db.all(query);
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
@@ -75,7 +78,10 @@ router.post('/', async (req, res) => {
         );
         itemId = lastID;
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     // add images
     try {
@@ -91,7 +97,10 @@ router.post('/', async (req, res) => {
             await db.run(query);
         }
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     res.status(200).json({
         id: itemId,
@@ -139,7 +148,11 @@ router.delete('/:itemId', async (req, res) => {
             WHERE id = ${itemId}`);
     } catch (error) {
         console.error(error);
-        throw new Error(error);
+
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     res.status(204).send();
 });
@@ -191,7 +204,10 @@ router.get('/search', async (req, res) => {
     try {
         results = await db.all(query);
     } catch (error) {
-        throw new Error(error);
+        error(error);
+        return res
+            .status(500)
+            .send('SQL error. Please see logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
