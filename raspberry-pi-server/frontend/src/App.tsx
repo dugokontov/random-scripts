@@ -8,6 +8,7 @@ import { NewStoragePage } from './features/storage/NewStoragePage';
 import { SearchPage } from './features/search/SearchPage';
 import { NavigationHeader } from './features/navigationHeader/NavigationHeader';
 import { EditStoragePage } from './features/storage/EditStoragePage';
+import { EditSectionPage } from './features/section/EditSectionPage';
 
 function App() {
     return (
@@ -30,6 +31,11 @@ function App() {
                     exact
                     path="/storage/:storageId/section"
                     component={NewSectionPage}
+                />
+                <Route
+                    exact
+                    path="/storage/:storageId/section/:sectionId/edit"
+                    component={EditSectionPage}
                 />
                 <Route
                     exact

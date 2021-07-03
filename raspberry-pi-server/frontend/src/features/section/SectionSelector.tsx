@@ -63,6 +63,7 @@ export function SectionSelector({
                                 position={position}
                                 name={name}
                                 onClick={onOtherSectionClick}
+                                id={id}
                             />
                         ))}
                         <SectionRect

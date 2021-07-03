@@ -17,6 +17,16 @@ export const useStorageIdParams = () => {
     return id;
 };
 
+export const useSectionIdParams = () => {
+    const { sectionId } = useParams<UrlParams.Section>();
+    const id = parseInt(sectionId, 10);
+    if (Number.isNaN(id)) {
+        console.error('Provided id is not a number.');
+        return 0;
+    }
+    return id;
+};
+
 export const useSearchQueryParams = () => {
     const { query } = useParams<UrlParams.SearchQuery>();
     return query;

@@ -17,14 +17,21 @@ export const useGetStorageAndSections = () => {
         data: storage,
         isLoading: isLoadingStorage,
         error: storageError,
+        isFetching: isFetchingStorage,
     } = useGetStorageByIdQuery(storageId);
     const {
         data: sections,
         isLoading: isLoadingSections,
         error: sectionsError,
+        isFetching: isFetchingSections,
     } = useGetSectionsByStorageIdQuery(storageId);
 
-    if (isLoadingStorage || isLoadingSections) {
+    if (
+        isLoadingStorage ||
+        isLoadingSections ||
+        isFetchingStorage ||
+        isFetchingSections
+    ) {
         return { data: undefined, isLoading: true, error: undefined };
     }
     const withError = (error: string) => ({

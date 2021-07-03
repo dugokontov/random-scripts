@@ -27,6 +27,13 @@ export type Section = {
     position: Position;
 };
 
+export type UpdateSectionPayload = {
+    id: number;
+    storageId: number;
+    name?: string;
+    position?: Position;
+}
+
 export type ImageIds = number[];
 
 export type Item = {
@@ -62,5 +69,8 @@ export namespace UrlParams {
     };
     export type SearchQuery = {
         query: string;
+    };
+    export type Section = {
+        sectionId: string;
     };
 }

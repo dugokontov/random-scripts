@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Section } from './types';
+import { Section, UpdateSectionPayload } from './types';
 
 // Define a service using a base URL and expected endpoints
 export const sectionsApi = createApi({
@@ -45,6 +45,26 @@ export const sectionsApi = createApi({
                 { type: 'Sections', id: `storage${storageId}` },
             ],
         }),
+        updateSection: builder.mutation<Section, UpdateSectionPayload>({
+            query: ({ id, name, position }) => {
+                const body: Partial<Section> = {};
+                if (name) {
+                    body.name = name.trim();
+                }
+                if (position) {
+                    body.position = position;
+                }
+                return {
+                    url: `section/${id}`,
+                    method: 'PATCH',
+                    body,
+                };
+            },
+            invalidatesTags: (_, __, { id, storageId }) => [
+                { type: 'Sections', id },
+                { type: 'Sections', id: `storage${storageId}` },
+            ],
+        }),
     }),
 });
 
@@ -54,4 +74,5 @@ export const {
     useGetSectionsByStorageIdQuery,
     useAddSectionMutation,
     useDeleteSectionMutation,
+    useUpdateSectionMutation,
 } = sectionsApi;

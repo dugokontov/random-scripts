@@ -7,6 +7,7 @@ import { AddItem } from '../item/AddItem';
 import { DeleteSection } from '../section/DeleteSection';
 import { DeleteStorage } from './DeleteStorage';
 import { EditStorageLink } from './EditStorageLink';
+import { EditSectionLink } from '../section/EditSectionLink';
 
 type Props = {
     storage: StorageType;
@@ -60,6 +61,12 @@ export function Storage({ storage, sections }: Props) {
                     <AddItem storageId={storage.id} />
                     {selectedSectionId && (
                         <DeleteSection
+                            sectionId={selectedSectionId}
+                            storageId={storage.id}
+                        />
+                    )}
+                    {selectedSectionId && (
+                        <EditSectionLink
                             sectionId={selectedSectionId}
                             storageId={storage.id}
                         />

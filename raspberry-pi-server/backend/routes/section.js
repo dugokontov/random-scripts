@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
             .send('param storageId is required and has to be number');
     }
     const db = await getDb();
+    /** @type {{ id: number, name: string, position: string }[]} */
     let results;
     try {
         results = await db.all(
@@ -91,6 +92,55 @@ router.delete('/:sectionId', async (req, res) => {
         return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.patch('/:sectionId', async (req, res) => {
+    const sectionId = parseInt(req.params.sectionId, 10);
+    if (Number.isNaN(sectionId)) {
+        log('Wrong id sent', req.params.sectionId);
+        return res.status(400).send('Wrong param sent');
+    }
+    /** @type {{name: string | undefined, position: [number, number, number, number] | undefined}} */
+    const { name, position } = req.body;
+    // TODO check all fields
+    const db = await getDb();
+
+    try {
+        let positionPayload = undefined;
+        if (position) {
+            positionPayload = JSON.stringify(position);
+        }
+        await db.run(SQL`
+            UPDATE section
+            SET name     = COALESCE(${name}, name),
+                position = COALESCE(${positionPayload}, position)
+            WHERE id = ${sectionId}`);
+    } catch (error) {
+        error(error);
+        return res.status(500).send('SQL error. See logs for more details');
+    }
+
+    /** @type {{ id: number, storage_id: number, name: string, position: string }} */
+    let result;
+    try {
+        result = await db.get(
+            SQL`select id, storage_id, name, position from section where id=${sectionId}`
+        );
+    } catch (e) {
+        error(e);
+        return res.status(500).send('SQL error. See logs for more details');
+    }
+    const resultToReturn = {
+        id: result.id,
+        storageId: result.storage_id,
+        name: result.name,
+        position: JSON.parse(result.position),
+    };
+    res.status(200).json(resultToReturn);
 });
 
 module.exports = router;
