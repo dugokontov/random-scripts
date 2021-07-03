@@ -76,7 +76,7 @@ router.post('/', async (req, res) => {
 router.get('/:imageId', async (req, res) => {
     const imageId = parseInt(req.params.imageId, 10);
     if (Number.isNaN(imageId)) {
-        log('Wrong id sent', req.param.imageId);
+        log('Wrong id sent', req.params.imageId);
         return res.status(400).send('Wrong param sent');
     }
 
@@ -103,7 +103,7 @@ router.get('/:imageId', async (req, res) => {
 router.get('/:imageId/thumbnail', async (req, res) => {
     const imageId = parseInt(req.params.imageId, 10);
     if (Number.isNaN(imageId)) {
-        log('Wrong id sent', req.param.imageId);
+        log('Wrong id sent', req.params.imageId);
         return res.status(400).send('Wrong param sent');
     }
 

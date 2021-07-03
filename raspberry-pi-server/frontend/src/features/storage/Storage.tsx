@@ -6,6 +6,7 @@ import { ItemsLoader } from '../items/ItemsLoader';
 import { AddItem } from '../item/AddItem';
 import { DeleteSection } from '../section/DeleteSection';
 import { DeleteStorage } from './DeleteStorage';
+import { EditStorageLink } from './EditStorageLink';
 
 type Props = {
     storage: StorageType;
@@ -33,6 +34,7 @@ export function Storage({ storage, sections }: Props) {
             <div className="row mb-2">
                 <div className="d-grid gap-2 d-md-flex">
                     <AddSection storageId={storage.id} />
+                    <EditStorageLink storageId={storage.id} />
                     <DeleteStorage storageId={storage.id} />
                 </div>
             </div>

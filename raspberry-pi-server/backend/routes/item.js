@@ -21,7 +21,7 @@ router.use(express.json());
 router.get('/', async (req, res) => {
     const storageId = parseInt(req.query.storageId, 10);
     if (Number.isNaN(storageId)) {
-        log('Wrong storageId sent', req.param.storageId);
+        log('Wrong storageId sent', req.params.storageId);
         return res
             .status(400)
             .send('param storageId is required and has to be number');
@@ -108,7 +108,7 @@ router.post('/', async (req, res) => {
 router.delete('/:itemId', async (req, res) => {
     const itemId = parseInt(req.params.itemId, 10);
     if (Number.isNaN(itemId)) {
-        log('Wrong id sent', req.param.itemId);
+        log('Wrong id sent', req.params.itemId);
         return res.status(400).send('Wrong param sent');
     }
     const db = await getDb();
@@ -134,7 +134,7 @@ router.delete('/:itemId', async (req, res) => {
 router.put('/:itemId', async (req, res) => {
     const itemId = parseInt(req.params.itemId, 10);
     if (Number.isNaN(itemId)) {
-        log('Wrong id sent', req.param.itemId);
+        log('Wrong id sent', req.params.itemId);
         return res.status(400).send('Wrong param sent');
     }
     /** @type {{sectionId: string | null, name: string | null, description: string | null, imageIds: string | null}} */

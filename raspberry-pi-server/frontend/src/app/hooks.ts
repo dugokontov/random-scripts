@@ -12,7 +12,7 @@ export const useStorageIdParams = () => {
     const id = parseInt(storageId, 10);
     if (Number.isNaN(id)) {
         console.error('Provided id is not a number.');
-        return -1;
+        return 0;
     }
     return id;
 };

@@ -7,6 +7,7 @@ import { NewItemPage } from './features/item/NewItemPage';
 import { NewStoragePage } from './features/storage/NewStoragePage';
 import { SearchPage } from './features/search/SearchPage';
 import { NavigationHeader } from './features/navigationHeader/NavigationHeader';
+import { EditStoragePage } from './features/storage/EditStoragePage';
 
 function App() {
     return (
@@ -19,6 +20,11 @@ function App() {
                     exact
                     path="/storage/:storageId"
                     component={StoragePage}
+                />
+                <Route
+                    exact
+                    path="/storage/:storageId/edit"
+                    component={EditStoragePage}
                 />
                 <Route
                     exact

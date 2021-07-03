@@ -9,6 +9,12 @@ export type StoragePayload = {
     image: FileList;
 };
 
+export type UpdateStoragePayload = {
+    id: number;
+    name?: string;
+    image: FileList | null;
+};
+
 export type Position = [number, number, number, number];
 export type UndefinedPosition =
     | [undefined, undefined, undefined, undefined]

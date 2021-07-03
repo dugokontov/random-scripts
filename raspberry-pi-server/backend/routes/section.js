@@ -15,7 +15,7 @@ router.use(express.json());
 router.get('/', async (req, res) => {
     const storageId = parseInt(req.query.storageId, 10);
     if (Number.isNaN(storageId)) {
-        log('Wrong storageId sent', req.param.storageId);
+        log('Wrong storageId sent', req.params.storageId);
         return res
             .status(400)
             .send('param storageId is required and has to be number');
@@ -77,7 +77,7 @@ router.post('/', async (req, res) => {
 router.delete('/:sectionId', async (req, res) => {
     const sectionId = parseInt(req.params.sectionId, 10);
     if (Number.isNaN(sectionId)) {
-        log('Wrong id sent', req.param.sectionId);
+        log('Wrong id sent', req.params.sectionId);
         return res.status(400).send('Wrong param sent');
     }
     // TODO: check that all items are removed first

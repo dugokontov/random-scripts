@@ -62,6 +62,38 @@ exports.getImageIdsForItem = async (db, itemId) => {
 };
 
 /**
+ * @param {Promise<sqlite.Database<sqlite3.Database, sqlite3.Statement>>} db
+ * @param {number} imageId
+ */
+exports.deleteStorageImage = async (db, imageId) => {
+    if (!imageId) {
+        return;
+    }
+    await db.run(SQL`
+        DELETE FROM image
+        WHERE id = ${imageId}`);
+};
+
+/**
+ * @param {Promise<sqlite.Database<sqlite3.Database, sqlite3.Statement>>} db
+ * @param {number} storageId
+ */
+exports.getStorageImageId = async (db, storageId) => {
+    if (!storageId) {
+        return null;
+    }
+    /** @type {{image_id: number}} */
+    const result = await db.get(SQL`
+        SELECT image_id
+        FROM storage
+        WHERE id = ${storageId}`);
+    if (!result) {
+        return null;
+    }
+    return result.image_id;
+};
+
+/**
  * @param {number[]} existingImageIds
  * @param {number[]} newImageIds
  */
