@@ -31,9 +31,7 @@ router.get('/', async (req, res) => {
         );
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
@@ -63,9 +61,7 @@ router.post('/', async (req, res) => {
         sectionId = lastID;
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(200).json({
         id: sectionId,
@@ -92,9 +88,7 @@ router.delete('/:sectionId', async (req, res) => {
         WHERE id = ${sectionId}`);
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
 });

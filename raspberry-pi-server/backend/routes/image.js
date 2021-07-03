@@ -26,7 +26,9 @@ router.post('/', async (req, res) => {
         uploadImage = [uploadImage];
     }
 
-    log(`Upload complete from ${req.ip}. Uploaded ${uploadImage.length} file(s).`);
+    log(
+        `Upload complete from ${req.ip}. Uploaded ${uploadImage.length} file(s).`
+    );
     const db = await getDb();
     const imageIds = [];
     try {
@@ -61,9 +63,7 @@ router.post('/', async (req, res) => {
         }
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
 
     res.status(200).json({ imageIds });
@@ -86,9 +86,7 @@ router.get('/:imageId', async (req, res) => {
         result = await db.get(SQL`SELECT image FROM image WHERE id=${imageId}`);
     } catch (e) {
         error(error);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     if (!result) {
         res.status(404).send('File not found');
@@ -117,9 +115,7 @@ router.get('/:imageId/thumbnail', async (req, res) => {
         );
     } catch (e) {
         error(error);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     if (!result) {
         res.status(404).send('File not found');

@@ -18,9 +18,7 @@ router.get('/', async (req, res) => {
         results = await db.all('select id, name, image_id from storage');
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
@@ -49,9 +47,7 @@ router.post('/', async (req, res) => {
         itemId = lastID;
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(200).json({
         id: itemId,
@@ -78,9 +74,7 @@ router.get('/:id', async (req, res) => {
         );
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     if (!result) {
         return res.status(404).send('Storage with provided id not found');
@@ -120,9 +114,7 @@ router.delete('/:storageId', async (req, res) => {
             WHERE id = ${storageId}`);
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
 });

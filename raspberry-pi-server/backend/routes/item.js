@@ -3,6 +3,12 @@ const { SQLStatement } = require('sql-template-strings');
 const SQL = require('sql-template-strings');
 
 const getDb = require('../helper/db');
+const {
+    deleteItemImages,
+    getImageIdsForItem,
+    getImageDiff,
+    addItemImages,
+} = require('../helper/image');
 const { log, error } = require('../helper/util');
 
 const router = express.Router();
@@ -41,9 +47,7 @@ router.get('/', async (req, res) => {
         results = await db.all(query);
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
@@ -79,28 +83,14 @@ router.post('/', async (req, res) => {
         itemId = lastID;
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     // add images
     try {
-        if (numberImageIds.length) {
-            /** @type {SQLStatement} */
-            const query = SQL`INSERT INTO item_image (item_id, image_id) VALUES`;
-            numberImageIds.forEach((imageId, index) => {
-                if (index !== 0) {
-                    query.append(SQL`,`);
-                }
-                query.append(SQL`(${itemId}, ${imageId})`);
-            });
-            await db.run(query);
-        }
+        await addItemImages(db, itemId, numberImageIds);
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(200).json({
         id: itemId,
@@ -123,36 +113,59 @@ router.delete('/:itemId', async (req, res) => {
     }
     const db = await getDb();
     try {
-        /** @type {{image_id: number}[]} */
-        const resultImageIds = await db.all(SQL`
-            SELECT image_id
-            FROM item_image
-            WHERE item_id = ${itemId}`);
-        const imageIds = resultImageIds.map((row) => row.image_id);
-        const deleteItemImageQuery = SQL`
-            DELETE FROM item_image
-            WHERE 1 = 2`;
-        imageIds.forEach((imageId) =>
-            deleteItemImageQuery.append(SQL` OR image_id = ${imageId}`)
-        );
-        await db.run(deleteItemImageQuery);
-        const deleteImageQuery = SQL`
-            DELETE FROM image
-            WHERE 1 = 2`;
-        imageIds.forEach((imageId) =>
-            deleteImageQuery.append(SQL` OR id = ${imageId}`)
-        );
-        await db.run(deleteImageQuery);
+        const imageIds = await getImageIdsForItem(db, itemId);
+
+        await deleteItemImages(db, imageIds);
+
         await db.run(SQL`
             DELETE FROM item
             WHERE id = ${itemId}`);
     } catch (error) {
-        console.error(error);
-
         error(error);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
+    }
+    res.status(204).send();
+});
+
+/**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.put('/:itemId', async (req, res) => {
+    const itemId = parseInt(req.params.itemId, 10);
+    if (Number.isNaN(itemId)) {
+        log('Wrong id sent', req.param.itemId);
+        return res.status(400).send('Wrong param sent');
+    }
+    /** @type {{sectionId: string | null, name: string | null, description: string | null, imageIds: string | null}} */
+    const { sectionId, name, description, imageIds } = req.body;
+    const newItemImageIds = imageIds
+        ?.split(',')
+        .filter((a) => a.trim())
+        .map(Number);
+    const db = await getDb();
+    try {
+        if (newItemImageIds !== null) {
+            const existingItemImageIds = await getImageIdsForItem(db, itemId);
+
+            const { imageIdsToAdd, imageIdsToRemove } = getImageDiff(
+                existingItemImageIds,
+                newItemImageIds
+            );
+
+            await deleteItemImages(db, imageIdsToRemove);
+            await addItemImages(db, itemId, imageIdsToAdd);
+        }
+
+        await db.run(SQL`
+            UPDATE item
+            SET section_id  = COALESCE(${sectionId ? +sectionId : null}, section_id),
+                name        = COALESCE(${name}, name),
+                description = COALESCE(${description}, description)
+            WHERE id = ${itemId}`);
+    } catch (error) {
+        error(error);
+        return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
 });
@@ -205,9 +218,7 @@ router.get('/search', async (req, res) => {
         results = await db.all(query);
     } catch (e) {
         error(e);
-        return res
-            .status(500)
-            .send('SQL error. Please see logs for more details');
+        return res.status(500).send('SQL error. See logs for more details');
     }
     const resultsToReturn = results.map((row) => ({
         id: row.id,
