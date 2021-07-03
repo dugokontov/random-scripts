@@ -7,6 +7,16 @@ export function NavigationHeader() {
     return (
         <header className="navbar navbar-expand-md navbar-dark bg-primary mb-3">
             <div className="container-fluid">
+                <div className="d-flex flex-row">
+                    <ul className="navbar-nav flex-row">
+                        <li className="nav-item px-2">
+                            <Link to="/" className="nav-link">
+                                Home
+                            </Link>
+                        </li>
+                        <NavigationStorages />
+                    </ul>
+                </div>
                 <button
                     className="navbar-toggler"
                     type="button"
@@ -16,17 +26,9 @@ export function NavigationHeader() {
                     <span className="navbar-toggler-icon"></span>
                 </button>
                 <div
-                    className="collapse navbar-collapse"
+                    className="collapse navbar-collapse justify-content-end"
                     id="navbarSupportedContent"
                 >
-                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
-                            <Link to="/" className="nav-link">
-                                Home
-                            </Link>
-                        </li>
-                        <NavigationStorages />
-                    </ul>
                     <NavigationSearch />
                 </div>
             </div>
