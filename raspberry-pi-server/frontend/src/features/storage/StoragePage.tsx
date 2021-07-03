@@ -1,46 +1,32 @@
 import React from 'react';
 import { StorageBreadcrumbs } from './StorageBreadcrumbs';
-import { useGetStorageByIdQuery } from '../../app/storagesApi';
 import { Loader } from '../loader/Loader';
 import { Storage } from './Storage';
-import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
-import { useStorageIdParams } from '../../app/hooks';
-import { getErrorMessage } from '../../helpers/errorMessage';
+import { useGetStorageAndSections } from './hooks';
 
 export function StoragePage() {
-    const storageId = useStorageIdParams();
-    const {
-        data: storage,
-        isLoading: isLoadingStorage,
-        error: storageError,
-    } = useGetStorageByIdQuery(storageId);
-    const {
-        data: sections,
-        isLoading: isSectionsLoading,
-        error: sectionsError,
-    } = useGetSectionsByStorageIdQuery(storageId);
+    const { data , isLoading, error } = useGetStorageAndSections();
     let content: React.ReactNode;
-    if (isLoadingStorage || isSectionsLoading) {
+    if (isLoading) {
         content = (
             <div className="row">
                 <Loader />
             </div>
         );
-    } else if (storageError || sectionsError || !storage || !sections) {
+    } else if (error || !data) {
         content = (
             <div className="alert alert-danger" role="alert">
-                {getErrorMessage(storageError, sectionsError) ??
-                    'Storage with this id not found'}
+                {error}
             </div>
         );
     } else {
-        content = <Storage storage={storage} sections={sections} />;
+        content = <Storage storage={data.storage} sections={data.sections} />;
     }
     return (
         <div className="container">
             <div className="row">
                 <div className="col">
-                    <StorageBreadcrumbs storageName={storage?.name} />
+                    <StorageBreadcrumbs storageName={data?.storage.name} />
                 </div>
             </div>
             {content}

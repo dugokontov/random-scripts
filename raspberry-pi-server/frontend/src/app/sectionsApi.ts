@@ -11,7 +11,7 @@ export const sectionsApi = createApi({
     endpoints: (builder) => ({
         getSectionsByStorageId: builder.query<Section[], number>({
             query: (storageId) => `section?storageId=${storageId}`,
-            providesTags: (result, error, storageId) =>
+            providesTags: (result, _, storageId) =>
                 result
                     ? [
                           ...result.map(({ id }) => ({
@@ -28,7 +28,7 @@ export const sectionsApi = createApi({
                 method: 'POST',
                 body,
             }),
-            invalidatesTags: (result, error, { storageId }) => [
+            invalidatesTags: (_, __, { storageId }) => [
                 { type: 'Sections', id: `storage${storageId}` },
             ],
         }),

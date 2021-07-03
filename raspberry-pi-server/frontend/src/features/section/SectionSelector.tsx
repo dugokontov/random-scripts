@@ -11,6 +11,7 @@ type Props = {
     onChange: (newPosition: Position | UndefinedPosition) => void;
     sectionName: string;
     otherSections: Section[];
+    onOtherSectionClick?: (sectionId: number) => void;
 };
 
 export function SectionSelector({
@@ -19,6 +20,7 @@ export function SectionSelector({
     onChange,
     sectionName,
     otherSections,
+    onOtherSectionClick,
 }: Props) {
     const updateSection = (xPercent: number, yPercent: number) => {
         if (position[0] == null || position[2] != null) {
@@ -60,6 +62,7 @@ export function SectionSelector({
                                 key={id}
                                 position={position}
                                 name={name}
+                                onClick={onOtherSectionClick}
                             />
                         ))}
                         <SectionRect
