@@ -3,7 +3,7 @@ import { Section, Storage as StorageType } from '../../app/types';
 import { AddSection } from '../section/AddSection';
 import { SectionViewer } from '../section/SectionViewer';
 import { ItemsLoader } from '../items/ItemsLoader';
-import { AddItem } from '../item/AddItem';
+import { AddItemLink } from '../item/AddItemLink';
 import { DeleteSection } from '../section/DeleteSection';
 import { DeleteStorage } from './DeleteStorage';
 import { EditStorageLink } from './EditStorageLink';
@@ -58,7 +58,7 @@ export function Storage({ storage, sections }: Props) {
             </div>
             <div className="row mb-2">
                 <div className="col d-grid gap-2 d-md-flex">
-                    <AddItem storageId={storage.id} />
+                    <AddItemLink storageId={storage.id} />
                     {selectedSectionId && (
                         <DeleteSection
                             sectionId={selectedSectionId}

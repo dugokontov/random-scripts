@@ -1,86 +1,24 @@
 import React from 'react';
-import { useStorageIdParams } from '../../app/hooks';
-import { useAddImageMutation } from '../../app/imagesApi';
-import { useAddItemMutation } from '../../app/itemsApi';
-import { useGetSectionsByStorageIdQuery } from '../../app/sectionsApi';
-import { useGetStorageByIdQuery } from '../../app/storagesApi';
-import { ImageIds, ItemPayload } from '../../app/types';
-import { getErrorMessage } from '../../helpers/errorMessage';
 import { Loader } from '../loader/Loader';
 import { AddSection } from '../section/AddSection';
+import { useAddItem } from './hooks';
 import { NewItem } from './NewItem';
 import { NewItemBreadcrumbs } from './NewItemBreadcrumbs';
 
 export function NewItemPage() {
-    const storageId = useStorageIdParams();
-
-    const {
-        data: storage,
-        isLoading: isLoadingStorage,
-        error: storageError,
-    } = useGetStorageByIdQuery(storageId);
-    const {
-        data: sections,
-        isLoading: isLoadingSections,
-        error: sectionsError,
-    } = useGetSectionsByStorageIdQuery(storageId);
-
-    const [
-        uploadImage,
-        { isLoading: isLoadingImageUpload, error: imageUploadError },
-    ] = useAddImageMutation();
-
-    const [
-        addNewItem,
-        { isLoading: isLoadingAddNewItem, error: addNewItemError },
-    ] = useAddItemMutation();
-
-    const addItem = async (item: ItemPayload) => {
-        let imageIds: ImageIds = [];
-        if (item.images) {
-            const uploadImageResponse = await uploadImage(item.images);
-            if ('error' in uploadImageResponse) {
-                return;
-            }
-            imageIds = uploadImageResponse.data.imageIds;
-        }
-        addNewItem({
-            storageId,
-            sectionId: item.sectionId,
-            name: item.name,
-            description: item.description,
-            imageIds,
-        });
-    };
+    const { addItem, storage, sections, isLoading, error } = useAddItem();
 
     let content: React.ReactNode;
-    if (
-        isLoadingSections ||
-        isLoadingStorage ||
-        isLoadingImageUpload ||
-        isLoadingAddNewItem
-    ) {
+    if (isLoading) {
         content = (
             <div className="row">
                 <Loader />
             </div>
         );
-    } else if (
-        sectionsError ||
-        storageError ||
-        imageUploadError ||
-        addNewItemError ||
-        !storage ||
-        !sections
-    ) {
+    } else if (error || !storage || !sections) {
         content = (
             <div className="alert alert-danger" role="alert">
-                {getErrorMessage(
-                    sectionsError,
-                    storageError,
-                    imageUploadError,
-                    addNewItemError
-                ) ?? 'Storage with this id not found'}
+                {error ?? 'Unknown error'}
             </div>
         );
     } else if (sections.length === 0) {
@@ -89,7 +27,7 @@ export function NewItemPage() {
                 <div className="alert alert-danger" role="alert">
                     You first need to add some sections to this storage
                 </div>
-                <AddSection storageId={storageId} />
+                <AddSection storageId={storage.id} />
             </>
         );
     } else {
@@ -106,8 +44,7 @@ export function NewItemPage() {
             <div className="row">
                 <div className="col">
                     <NewItemBreadcrumbs
-                        storageId={storageId}
-                        storageName={storage?.name ?? storageId.toString()}
+                        storageName={storage?.name}
                     />
                 </div>
             </div>

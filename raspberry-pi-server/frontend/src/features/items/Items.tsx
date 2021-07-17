@@ -2,6 +2,7 @@ import React from 'react';
 import { Item, Section } from '../../app/types';
 import { ImageAndSlider } from '../image/ImageAndSlider';
 import { DeleteItems } from '../item/DeleteItem';
+import { EditItemLink } from '../item/EditItemLink';
 
 type Props = {
     items: Item[];
@@ -35,11 +36,14 @@ export function Items({ items, sections }: Props) {
                             />
                         </td>
                         <td>
-                            <DeleteItems
-                                itemId={id}
-                                sectionId={sectionId}
-                                storageId={sections[0].storageId}
-                            />
+                            <div className="gap-2 d-grid">
+                                <DeleteItems
+                                    itemId={id}
+                                    sectionId={sectionId}
+                                    storageId={sections[0].storageId}
+                                />
+                                <EditItemLink itemId={id} />
+                            </div>
                         </td>
                     </tr>
                 ))}

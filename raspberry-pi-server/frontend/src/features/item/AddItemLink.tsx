@@ -4,7 +4,7 @@ import { Plus } from '../icon/Plus';
 
 type Props = { storageId: number };
 
-export function AddItem({ storageId }: Props) {
+export function AddItemLink({ storageId }: Props) {
     return (
         <Link to={`/storage/${storageId}/item`} className="btn btn-primary">
             <Plus />

@@ -9,6 +9,7 @@ import { SearchPage } from './features/search/SearchPage';
 import { NavigationHeader } from './features/navigationHeader/NavigationHeader';
 import { EditStoragePage } from './features/storage/EditStoragePage';
 import { EditSectionPage } from './features/section/EditSectionPage';
+import { EditItemPage } from './features/item/EditItemPage';
 
 function App() {
     return (
@@ -41,6 +42,11 @@ function App() {
                     exact
                     path="/storage/:storageId/item"
                     component={NewItemPage}
+                />
+                <Route
+                    exact
+                    path="/item/:itemId"
+                    component={EditItemPage}
                 />
 
                 <Route exact path="/search/:query" component={SearchPage} />

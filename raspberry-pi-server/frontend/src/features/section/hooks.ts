@@ -3,7 +3,7 @@ import {
     useAddSectionMutation,
     useUpdateSectionMutation,
 } from '../../app/sectionsApi';
-import { Section, Storage } from '../../app/types';
+import { Section, Storage, UpdateSectionPayload } from '../../app/types';
 import { getErrorMessage } from '../../helpers/errorMessage';
 import { useGetStorageAndSections } from '../storage/hooks';
 
@@ -44,8 +44,22 @@ export const useUpdateSection = () => {
         }
     }
 
+    const editSection = async (sectionPayload: UpdateSectionPayload) => {
+        const body: UpdateSectionPayload = {
+            id: sectionPayload.id,
+            storageId: sectionPayload.storageId,
+        };
+        if (sectionPayload.name) {
+            body.name = sectionPayload.name.trim();
+        }
+        if (sectionPayload.position) {
+            body.position = sectionPayload.position;
+        }
+        await updateSection(body);
+    };
+
     return {
-        editSection: updateSection,
+        editSection,
         isLoading: isLoading || isLoadingUpdate,
         error: errorToReturn,
         data: dataToReturn,

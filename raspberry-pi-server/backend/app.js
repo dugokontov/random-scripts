@@ -4,7 +4,6 @@ const cors = require('cors');
 const path = require('path');
 
 const print = require('./print');
-const { log } = require('./helper/util');
 
 const app = express();
 

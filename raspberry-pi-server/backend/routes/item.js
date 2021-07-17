@@ -15,6 +15,8 @@ const router = express.Router();
 router.use(express.json());
 
 /**
+ * Get list of items based on provided query params: storageId and/or sectionId
+ * If sectionId is null it will return all items from storageId
  * @param {express.Request} req
  * @param {express.Response} res
  */
@@ -37,7 +39,7 @@ router.get('/', async (req, res) => {
     WHERE s.storage_id = ${storageId}`;
 
     if (!Number.isNaN(sectionId)) {
-        query.append(SQL` and i.section_id = ${sectionId}`);
+        query.append(SQL` AND i.section_id = ${sectionId}`);
     }
 
     const db = await getDb();
@@ -102,6 +104,44 @@ router.post('/', async (req, res) => {
 });
 
 /**
+ * Get one item by itemId
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.get('/:itemId', async (req, res) => {
+    const itemId = parseInt(req.params.itemId, 10);
+    if (Number.isNaN(itemId)) {
+        log('Wrong id sent', req.params.itemId);
+        return res.status(400).send('Wrong param sent');
+    }
+    /** @type {SQLStatement} */
+    const query = SQL`
+    SELECT i.id, i.section_id, s.storage_id, i.name, i.description,
+        (SELECT group_concat(image_id) from item_image ii where ii.item_id = i.id) as image_ids
+    FROM item i
+    LEFT JOIN section s on s.id = i.section_id
+    WHERE i.id = ${itemId}`;
+
+    const db = await getDb();
+    /** @type {{id: number, section_id: number, storage_id: number, name: string, description: string, image_ids: string | undefined}} */
+    let result;
+    try {
+        result = await db.get(query);
+    } catch (e) {
+        error(e);
+        return res.status(500).send('SQL error. See logs for more details');
+    }
+    const resultToReturn = {
+        id: result.id,
+        sectionId: result.section_id,
+        name: result.name,
+        description: result.description,
+        imageIds: result.image_ids?.split(',').map(Number) ?? [],
+    };
+    res.status(200).json(resultToReturn);
+});
+
+/**
  * @param {express.Request} req
  * @param {express.Response} res
  */
@@ -131,7 +171,7 @@ router.delete('/:itemId', async (req, res) => {
  * @param {express.Request} req
  * @param {express.Response} res
  */
-router.put('/:itemId', async (req, res) => {
+router.patch('/:itemId', async (req, res) => {
     const itemId = parseInt(req.params.itemId, 10);
     if (Number.isNaN(itemId)) {
         log('Wrong id sent', req.params.itemId);

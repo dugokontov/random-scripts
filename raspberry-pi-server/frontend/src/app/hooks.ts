@@ -31,3 +31,14 @@ export const useSearchQueryParams = () => {
     const { query } = useParams<UrlParams.SearchQuery>();
     return query;
 };
+
+export const useItemIdParams = () => {
+    const { itemId } = useParams<UrlParams.Item>();
+    const id = parseInt(itemId, 10);
+    if (Number.isNaN(id)) {
+        console.error('Provided id is not a number.');
+        return 0;
+    }
+    return id;
+};
+

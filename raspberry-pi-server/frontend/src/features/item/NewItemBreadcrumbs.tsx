@@ -1,15 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useStorageIdParams } from '../../app/hooks';
 
 type Props = {
-    storageId: number;
     storageName?: string;
 };
 
-export function NewItemBreadcrumbs({
-    storageId,
-    storageName = 'Storage',
-}: Props) {
+export function NewItemBreadcrumbs({ storageName = 'Storage' }: Props) {
+    const storageId = useStorageIdParams();
     return (
         <nav aria-label="breadcrumb">
             <ol className="breadcrumb">

@@ -42,20 +42,11 @@ export const storagesApi = createApi({
             invalidatesTags: ['Storages'],
         }),
         updateStorage: builder.mutation<Storage, Partial<Storage>>({
-            query: ({ id, name, imageId }) => {
-                const body: Partial<Storage> = {};
-                if (name?.trim()) {
-                    body.name = name.trim();
-                }
-                if (imageId) {
-                    body.imageId = imageId;
-                }
-                return {
-                    url: `storage/${id}`,
-                    method: 'PATCH',
-                    body,
-                };
-            },
+            query: ({ id, ...body }) => ({
+                url: `storage/${id}`,
+                method: 'PATCH',
+                body,
+            }),
             invalidatesTags: (_, __, { id }) => [
                 { type: 'Storages', id: 'LIST' },
                 { type: 'Storages', id: id },

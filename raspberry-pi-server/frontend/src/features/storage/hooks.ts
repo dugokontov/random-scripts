@@ -113,20 +113,29 @@ export const useEditStorage = () => {
         { isLoading: isLoadingUpdate, error: updateStorageError },
     ] = useUpdateStorageMutation();
 
-    const editStorageAndRedirect = async (storage: UpdateStoragePayload) => {
+    const editStorageAndRedirect = async (
+        storagePayload: UpdateStoragePayload
+    ) => {
         let imageId: number | undefined = undefined;
-        if (storage.image) {
-            const uploadImageResponse = await uploadImage(storage.image);
+        if (storagePayload.image) {
+            const uploadImageResponse = await uploadImage(storagePayload.image);
 
             if ('error' in uploadImageResponse) {
                 return;
             }
             imageId = uploadImageResponse.data.imageIds[0];
         }
+        const body: Partial<Storage> = { id: storagePayload.id };
+        if (storagePayload.name?.trim()) {
+            body.name = storagePayload.name.trim();
+        }
+        if (imageId) {
+            body.imageId = imageId;
+        }
         const updateStorageResponse = await updateStorage({
-            id: storage.id,
+            id: storagePayload.id,
             imageId,
-            name: storage.name,
+            name: storagePayload.name,
         });
         if ('error' in updateStorageResponse) {
             return;

@@ -32,7 +32,7 @@ export type UpdateSectionPayload = {
     storageId: number;
     name?: string;
     position?: Position;
-}
+};
 
 export type ImageIds = number[];
 
@@ -42,6 +42,31 @@ export type Item = {
     name: string;
     description?: string;
     imageIds: ImageIds;
+};
+
+export type ItemWithStorageId = {
+    storageId: number;
+} & Item;
+
+export type UpdateItemPayload = {
+    id: number;
+    sectionId: number;
+    storageId: number;
+    oldStorageId: number;
+    oldSectionId: number;
+    name?: string;
+    description?: string;
+    imageIds?: ImageIds;
+};
+
+export type ItemUpdate = {
+    id: number;
+    sectionId: number;
+    storageId: number;
+    name: string;
+    description?: string;
+    newImages: FileList | null;
+    deleteImageIds: ImageIds;
 };
 
 export type ItemPayload = {
@@ -72,5 +97,8 @@ export namespace UrlParams {
     };
     export type Section = {
         sectionId: string;
+    };
+    export type Item = {
+        itemId: string;
     };
 }

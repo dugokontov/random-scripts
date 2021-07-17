@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { Item, ItemSearch } from './types';
+import { Item, ItemSearch, ItemWithStorageId, UpdateItemPayload } from './types';
 
 // Define a service using a base URL and expected endpoints
 export const itemsApi = createApi({
@@ -9,6 +9,10 @@ export const itemsApi = createApi({
         baseUrl: `${process.env.REACT_APP_BACKEND_URL}/api`,
     }),
     endpoints: (builder) => ({
+        getItem: builder.query<ItemWithStorageId, number>({
+            query: (itemId) => `item/${itemId}`,
+            providesTags: (_, __, itemId) => [{ type: 'Items', id: itemId }],
+        }),
         getItemsByStorageIdSectionId: builder.query<Item[], string>({
             query: (storageIdSectionId) => {
                 const [storageId, sectionId] = storageIdSectionId.split('.');
@@ -76,14 +80,34 @@ export const itemsApi = createApi({
                 },
             ],
         }),
+        updateItem: builder.mutation<Item, UpdateItemPayload>({
+            query: ({ id, oldStorageId, storageId, ...body }) => ({
+                url: `/item/${id}`,
+                method: 'PATCH',
+                body,
+            }),
+            invalidatesTags: (
+                _,
+                __,
+                { id, oldStorageId, oldSectionId, storageId, sectionId }
+            ) => [
+                { type: 'Items', id },
+                { type: 'Items', id: `${storageId}.${sectionId}` },
+                { type: 'Items', id: `${storageId}.${undefined}` },
+                { type: 'Items', id: `${oldStorageId}.${oldSectionId}` },
+                { type: 'Items', id: `${oldStorageId}.${undefined}` },
+            ],
+        }),
     }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
 export const {
+    useGetItemQuery,
     useGetItemsByStorageIdSectionIdQuery,
     useAddItemMutation,
     useDeleteItemMutation,
     useSearchItemQuery,
+    useUpdateItemMutation,
 } = itemsApi;
