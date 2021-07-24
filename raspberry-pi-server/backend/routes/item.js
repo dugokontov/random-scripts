@@ -134,6 +134,7 @@ router.get('/:itemId', async (req, res) => {
     const resultToReturn = {
         id: result.id,
         sectionId: result.section_id,
+        storageId: result.storage_id,
         name: result.name,
         description: result.description,
         imageIds: result.image_ids?.split(',').map(Number) ?? [],
@@ -160,8 +161,8 @@ router.delete('/:itemId', async (req, res) => {
         await db.run(SQL`
             DELETE FROM item
             WHERE id = ${itemId}`);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
@@ -177,20 +178,17 @@ router.patch('/:itemId', async (req, res) => {
         log('Wrong id sent', req.params.itemId);
         return res.status(400).send('Wrong param sent');
     }
-    /** @type {{sectionId: string | null, name: string | null, description: string | null, imageIds: string | null}} */
+    /** @type {{sectionId: string | null, name: string | null, description: string | null, imageIds: number[] | null}} */
     const { sectionId, name, description, imageIds } = req.body;
-    const newItemImageIds = imageIds
-        ?.split(',')
-        .filter((a) => a.trim())
-        .map(Number);
+    
     const db = await getDb();
     try {
-        if (newItemImageIds !== null) {
+        if (imageIds != null) {
             const existingItemImageIds = await getImageIdsForItem(db, itemId);
 
             const { imageIdsToAdd, imageIdsToRemove } = getImageDiff(
                 existingItemImageIds,
-                newItemImageIds
+                imageIds
             );
 
             await deleteItemImages(db, imageIdsToRemove);
@@ -199,12 +197,14 @@ router.patch('/:itemId', async (req, res) => {
 
         await db.run(SQL`
             UPDATE item
-            SET section_id  = COALESCE(${sectionId ? +sectionId : null}, section_id),
+            SET section_id  = COALESCE(${
+                sectionId ? +sectionId : null
+            }, section_id),
                 name        = COALESCE(${name}, name),
                 description = COALESCE(${description}, description)
             WHERE id = ${itemId}`);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();

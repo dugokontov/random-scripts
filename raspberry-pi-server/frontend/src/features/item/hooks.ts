@@ -1,3 +1,4 @@
+import { useHistory } from 'react-router-dom';
 import { useItemIdParams, useStorageIdParams } from '../../app/hooks';
 import { useAddImageMutation } from '../../app/imagesApi';
 import {
@@ -90,6 +91,7 @@ export const useAddItem = () => {
 };
 
 export const useUpdateItem = () => {
+    const history = useHistory();
     const itemId = useItemIdParams();
 
     const {
@@ -113,7 +115,7 @@ export const useUpdateItem = () => {
         { isLoading: isLoadingUpdateItem, error: updateItemError },
     ] = useUpdateItemMutation();
 
-    const editItem = async (itemUpdate: ItemUpdate) => {
+    const editItemAndRedirect = async (itemUpdate: ItemUpdate) => {
         if (!item) {
             return;
         }
@@ -123,7 +125,8 @@ export const useUpdateItem = () => {
             if ('error' in uploadImageResponse) {
                 return;
             }
-            imageIds = uploadImageResponse.data.imageIds;
+            // property imageIds is frozen
+            imageIds = uploadImageResponse.data.imageIds.slice();
         }
         const remainingImageIds = item.imageIds.filter(
             (imageId) => !itemUpdate.deleteImageIds.includes(imageId)
@@ -146,6 +149,7 @@ export const useUpdateItem = () => {
             updatePayload.imageIds = imageIds;
         }
         updateItem(updatePayload);
+        history.push(`/storage/${itemUpdate.storageId}`);
     };
 
     let error: string | undefined = undefined;
@@ -167,7 +171,7 @@ export const useUpdateItem = () => {
     }
 
     return {
-        editItem,
+        editItemAndRedirect,
         item,
         storages,
         isLoading:

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Loader } from '../loader/Loader';
-import { AddSection } from '../section/AddSection';
+import { NoSections } from '../section/NoSections';
 import { useAddItem } from './hooks';
 import { NewItem } from './NewItem';
 import { NewItemBreadcrumbs } from './NewItemBreadcrumbs';
@@ -22,14 +22,7 @@ export function NewItemPage() {
             </div>
         );
     } else if (sections.length === 0) {
-        content = (
-            <>
-                <div className="alert alert-danger" role="alert">
-                    You first need to add some sections to this storage
-                </div>
-                <AddSection storageId={storage.id} />
-            </>
-        );
+        content = <NoSections storage={storage} />;
     } else {
         content = (
             <NewItem
@@ -43,9 +36,7 @@ export function NewItemPage() {
         <div className="container">
             <div className="row">
                 <div className="col">
-                    <NewItemBreadcrumbs
-                        storageName={storage?.name}
-                    />
+                    <NewItemBreadcrumbs storageName={storage?.name} />
                 </div>
             </div>
             {content}

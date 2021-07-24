@@ -156,8 +156,8 @@ router.patch('/:storageId', async (req, res) => {
         if (imageId != null && oldImageId !== imageId) {
             await deleteStorageImage(db, oldImageId);
         }
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
 

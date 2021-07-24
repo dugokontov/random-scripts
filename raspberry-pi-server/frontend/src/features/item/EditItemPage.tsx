@@ -1,9 +1,12 @@
 import React from 'react';
 import { Loader } from '../loader/Loader';
+import { EditItem } from './EditItem';
+import { EditItemBreadcrumbs } from './EditItemBreadcrumbs';
 import { useUpdateItem } from './hooks';
 
 export function EditItemPage() {
-    const { editItem, item, storages, isLoading, error } = useUpdateItem();
+    const { editItemAndRedirect, item, storages, isLoading, error } =
+        useUpdateItem();
 
     let content: React.ReactNode;
     if (isLoading) {
@@ -19,13 +22,21 @@ export function EditItemPage() {
             </div>
         );
     } else {
-        content = <div>Edit item page</div>;
+        content = (
+            <EditItem
+                item={item}
+                storages={storages}
+                onEditItem={editItemAndRedirect}
+            />
+        );
     }
     return (
         <div className="container">
             <div className="row">
                 <div className="col">
-                    <div>Edit item breadcrumbs</div>
+                    <div>
+                        <EditItemBreadcrumbs />
+                    </div>
                 </div>
             </div>
             {content}

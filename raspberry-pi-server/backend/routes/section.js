@@ -119,8 +119,8 @@ router.patch('/:sectionId', async (req, res) => {
             SET name     = COALESCE(${name}, name),
                 position = COALESCE(${positionPayload}, position)
             WHERE id = ${sectionId}`);
-    } catch (error) {
-        error(error);
+    } catch (e) {
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
 

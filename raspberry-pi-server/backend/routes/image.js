@@ -85,7 +85,7 @@ router.get('/:imageId', async (req, res) => {
     try {
         result = await db.get(SQL`SELECT image FROM image WHERE id=${imageId}`);
     } catch (e) {
-        error(error);
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
     if (!result) {
@@ -114,7 +114,7 @@ router.get('/:imageId/thumbnail', async (req, res) => {
             SQL`SELECT thumbnail FROM image WHERE id=${imageId}`
         );
     } catch (e) {
-        error(error);
+        error(e);
         return res.status(500).send('SQL error. See logs for more details');
     }
     if (!result) {
