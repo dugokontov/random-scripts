@@ -15,6 +15,70 @@ const router = express.Router();
 router.use(express.json());
 
 /**
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+router.get('/search', async (req, res) => {
+    /** @type {string} */
+    let q = req.query.q?.trim();
+    q = q.replace(/\//g, ' ');
+    if (!q) {
+        res.status(200).json([]);
+    }
+
+    /** @type {SQLStatement} */
+    const query = SQL`
+    SELECT
+        i.id,
+        i.section_id,
+        i.name,
+        i.description,
+        (SELECT group_concat(image_id) from item_image ii where ii.item_id = i.id) as image_ids,
+        s.name as section_name,
+        st.id as storage_id,
+        st.name as storage_name,
+        st.image_id as storage_image_id
+    FROM item i
+    LEFT JOIN section s on s.id = i.section_id
+    LEFT JOIN storage st on st.id = s.storage_id
+    WHERE i.id IN (SELECT rowid FROM item_fts WHERE item_fts MATCH ${q} ORDER BY rank)`;
+
+    const db = await getDb();
+    /**
+     * @type {{
+     *  id: number,
+     *  section_id: number,
+     *  name: string,
+     *  description: string,
+     *  image_ids: string | undefined,
+     *  section_name: string,
+     *  storage_id: number,
+     *  storage_name: string,
+     *  image_id: number
+     * }[]
+     * } */
+    let results;
+    try {
+        results = await db.all(query);
+    } catch (e) {
+        error(e);
+        return res.status(500).send('SQL error. See logs for more details');
+    }
+    const resultsToReturn = results.map((row) => ({
+        id: row.id,
+        sectionId: row.section_id,
+        name: row.name,
+        description: row.description,
+        imageIds: row.image_ids?.split(',').map(Number) ?? [],
+        sectionName: row.section_name,
+        storageId: row.storage_id,
+        storageName: row.storage_name,
+        imageId: row.image_id,
+    }));
+    res.status(200).json(resultsToReturn);
+});
+
+/**
  * Get list of items based on provided query params: storageId and/or sectionId
  * If sectionId is null it will return all items from storageId
  * @param {express.Request} req
@@ -208,70 +272,6 @@ router.patch('/:itemId', async (req, res) => {
         return res.status(500).send('SQL error. See logs for more details');
     }
     res.status(204).send();
-});
-
-/**
- * @param {express.Request} req
- * @param {express.Response} res
- */
-router.get('/search', async (req, res) => {
-    /** @type {string} */
-    let q = req.query.q?.trim();
-    q = q.replace(/\//g, ' ');
-    if (!q) {
-        res.status(200).json([]);
-    }
-
-    /** @type {SQLStatement} */
-    const query = SQL`
-    SELECT
-        i.id,
-        i.section_id,
-        i.name,
-        i.description,
-        (SELECT group_concat(image_id) from item_image ii where ii.item_id = i.id) as image_ids,
-        s.name as section_name,
-        st.id as storage_id,
-        st.name as storage_name,
-        st.image_id as storage_image_id
-    FROM item i
-    LEFT JOIN section s on s.id = i.section_id
-    LEFT JOIN storage st on st.id = s.storage_id
-    WHERE i.id IN (SELECT rowid FROM item_fts WHERE item_fts MATCH ${q} ORDER BY rank)`;
-
-    const db = await getDb();
-    /**
-     * @type {{
-     *  id: number,
-     *  section_id: number,
-     *  name: string,
-     *  description: string,
-     *  image_ids: string | undefined,
-     *  section_name: string,
-     *  storage_id: number,
-     *  storage_name: string,
-     *  image_id: number
-     * }[]
-     * } */
-    let results;
-    try {
-        results = await db.all(query);
-    } catch (e) {
-        error(e);
-        return res.status(500).send('SQL error. See logs for more details');
-    }
-    const resultsToReturn = results.map((row) => ({
-        id: row.id,
-        sectionId: row.section_id,
-        name: row.name,
-        description: row.description,
-        imageIds: row.image_ids?.split(',').map(Number) ?? [],
-        sectionName: row.section_name,
-        storageId: row.storage_id,
-        storageName: row.storage_name,
-        imageId: row.image_id,
-    }));
-    res.status(200).json(resultsToReturn);
 });
 
 module.exports = router;
